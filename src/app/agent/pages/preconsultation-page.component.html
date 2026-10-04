@@ -1,19 +1,29 @@
-<section
-  class="preconsultation-empty"
-  data-testid="preconsultation-empty"
->
-  <p>Asistente IA</p>
-
-  <h1>Inicia tu preconsulta</h1>
-
-  <p>
-    Realiza tu preconsulta antes de hablar con el profesional.
-  </p>
-
-  <button
-    type="button"
-    data-testid="start-preconsultation"
+@if (isLoading()) {
+  <section
+    class="preconsultation-loading"
+    data-testid="preconsultation-loading"
   >
-    Iniciar preconsulta
-  </button>
-</section>
+    <p>Preparando tu preconsulta...</p>
+  </section>
+} @else {
+  <section
+    class="preconsultation-empty"
+    data-testid="preconsultation-empty"
+  >
+    <p>Asistente IA</p>
+
+    <h1>Inicia tu preconsulta</h1>
+
+    <p>
+      Realiza tu preconsulta antes de hablar con el profesional.
+    </p>
+
+    <button
+      type="button"
+      data-testid="start-preconsultation"
+      (click)="startPreconsultation()"
+    >
+      Iniciar preconsulta
+    </button>
+  </section>
+}
