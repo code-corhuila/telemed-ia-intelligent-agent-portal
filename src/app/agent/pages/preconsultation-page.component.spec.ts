@@ -49,4 +49,28 @@ describe('PreconsultationPageComponent', () => {
     'Preparando tu preconsulta',
   );
 });
+
+it('shows the first synthetic agent message after starting the preconsultation', async () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const startButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="start-preconsultation"]',
+  );
+
+  startButton?.click();
+  fixture.detectChanges();
+
+  await new Promise((resolve) => setTimeout(resolve, 700));
+
+  fixture.detectChanges();
+
+  expect(
+    element.querySelector('[data-testid="preconsultation-chat"]'),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'Hola, soy el asistente de preconsulta de TeleMed IA',
+  );
+});
+
 });
