@@ -59,7 +59,7 @@
             "target": "agent:serve-original:development",
             "rebuildDelay": 0,
             "dev": true,
-            "port": 4201
+            "port": 4202
           }
         },
         "serve-original": {
@@ -71,7 +71,7 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "port": 4201
+            "port": 4202
           }
         },
         "test": {
