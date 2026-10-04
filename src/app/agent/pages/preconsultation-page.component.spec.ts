@@ -30,4 +30,23 @@ describe('PreconsultationPageComponent', () => {
     expect(startButton).toBeTruthy();
     expect(startButton?.disabled).toBe(false);
   });
+  
+  it('shows loading after starting the preconsultation', () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const startButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="start-preconsultation"]',
+  );
+
+  startButton?.click();
+  fixture.detectChanges();
+
+  expect(
+    element.querySelector('[data-testid="preconsultation-loading"]'),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'Preparando tu preconsulta',
+  );
+});
 });
