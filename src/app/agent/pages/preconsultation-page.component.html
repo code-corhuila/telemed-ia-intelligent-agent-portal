@@ -1,9 +1,24 @@
-@if (isLoading()) {
+@if (viewState() === 'loading') {
   <section
     class="preconsultation-loading"
     data-testid="preconsultation-loading"
   >
     <p>Preparando tu preconsulta...</p>
+  </section>
+} @else if (viewState() === 'chat') {
+  <section
+    class="preconsultation-chat"
+    data-testid="preconsultation-chat"
+  >
+    @for (message of messages(); track message.id) {
+      <article>
+        <strong>
+          {{ message.sender === 'AGENT' ? 'TeleMed IA' : 'Paciente' }}
+        </strong>
+
+        <p>{{ message.content }}</p>
+      </article>
+    }
   </section>
 } @else {
   <section
