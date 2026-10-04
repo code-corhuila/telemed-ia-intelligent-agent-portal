@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+} from '@angular/core';
 
 @Component({
   selector: 'app-preconsultation-page',
@@ -7,4 +11,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './preconsultation-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreconsultationPageComponent {}
+export class PreconsultationPageComponent {
+  readonly isLoading = signal(false);
+
+  startPreconsultation(): void {
+    this.isLoading.set(true);
+  }
+}
