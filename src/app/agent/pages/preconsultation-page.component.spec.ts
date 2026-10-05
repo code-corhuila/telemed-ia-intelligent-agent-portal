@@ -94,7 +94,7 @@ describe('PreconsultationPageComponent', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(element.textContent).toContain(
-      'Preconsulta con TeleMed IA',
+      'Nueva preconsulta',
     );
 
     expect(
