@@ -25,41 +25,56 @@ describe('PreconsultationPageComponent', () => {
       'Inicia tu conversación con la IA',
     );
 
-    const startButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="start-preconsultation"]',
-    );
+    expect(
+      element.querySelector('[data-testid="start-preconsultation"]'),
+    ).toBeFalsy();
 
-    expect(startButton).toBeTruthy();
-    expect(startButton?.disabled).toBe(false);
+    expect(
+      element.querySelector('[data-testid="consultation-reason-input"]'),
+    ).toBeTruthy();
   });
 
-  it('shows loading after starting the preconsultation', () => {
+  it('shows loading after submitting the first message', () => {
     const element: HTMLElement = fixture.nativeElement;
 
-    const startButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="start-preconsultation"]',
+    const input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
     );
 
-    startButton?.click();
+    const sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
+
+    input!.value = 'Tengo dolor de cabeza desde ayer';
+    input!.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    sendButton!.click();
     fixture.detectChanges();
 
     expect(
       element.querySelector('[data-testid="preconsultation-loading"]'),
     ).toBeTruthy();
-
-    expect(element.textContent).toContain(
-      'Preparando tu preconsulta',
-    );
   });
 
   it('shows the first synthetic agent message after starting the preconsultation', async () => {
     const element: HTMLElement = fixture.nativeElement;
 
-    const startButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="start-preconsultation"]',
+    const input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
     );
 
-    startButton?.click();
+    const sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
+
+    input!.value = 'Tengo dolor de cabeza desde ayer';
+    input!.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    sendButton!.click();
     fixture.detectChanges();
 
     await new Promise((resolve) => setTimeout(resolve, 700));
@@ -95,7 +110,7 @@ describe('PreconsultationPageComponent', () => {
     );
   });
 
-  it('shows the patient consultation reason after submitting it', () => {
+  it('shows the patient consultation reason after submitting it', async () => {
     const element: HTMLElement = fixture.nativeElement;
 
     const input = element.querySelector<HTMLInputElement>(
@@ -105,9 +120,6 @@ describe('PreconsultationPageComponent', () => {
     const sendButton = element.querySelector<HTMLButtonElement>(
       '[data-testid="send-consultation-reason"]',
     );
-
-    expect(input).toBeTruthy();
-    expect(sendButton).toBeTruthy();
 
     input!.value = 'Tengo dolor de cabeza desde ayer';
     input!.dispatchEvent(new Event('input'));
@@ -119,43 +131,48 @@ describe('PreconsultationPageComponent', () => {
     sendButton!.click();
     fixture.detectChanges();
 
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    fixture.detectChanges();
+
     expect(element.textContent).toContain(
       'Tengo dolor de cabeza desde ayer',
     );
   });
 
-  it('starts the preconsultation when the patient submits the first message', () => {
-  const element: HTMLElement = fixture.nativeElement;
+  it('starts the preconsultation when the patient submits the first message', async () => {
+    const element: HTMLElement = fixture.nativeElement;
 
-  expect(
-    element.querySelector('[data-testid="start-preconsultation"]'),
-  ).toBeFalsy();
+    expect(
+      element.querySelector('[data-testid="start-preconsultation"]'),
+    ).toBeFalsy();
 
-  const input = element.querySelector<HTMLInputElement>(
-    '[data-testid="consultation-reason-input"]',
-  );
+    const input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
+    );
 
-  const sendButton = element.querySelector<HTMLButtonElement>(
-    '[data-testid="send-consultation-reason"]',
-  );
+    const sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
 
-  expect(input).toBeTruthy();
-  expect(sendButton).toBeTruthy();
+    input!.value = 'Tengo dolor de cabeza desde ayer';
+    input!.dispatchEvent(new Event('input'));
 
-  input!.value = 'Tengo dolor de cabeza desde ayer';
-  input!.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
 
-  fixture.detectChanges();
+    sendButton!.click();
+    fixture.detectChanges();
 
-  sendButton!.click();
-  fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 700));
 
-  expect(
-    element.querySelector('[data-testid="preconsultation-chat"]'),
-  ).toBeTruthy();
+    fixture.detectChanges();
 
-  expect(element.textContent).toContain(
-    'Tengo dolor de cabeza desde ayer',
-  );
-});
+    expect(
+      element.querySelector('[data-testid="preconsultation-chat"]'),
+    ).toBeTruthy();
+
+    expect(element.textContent).toContain(
+      'Tengo dolor de cabeza desde ayer',
+    );
+  });
 });
