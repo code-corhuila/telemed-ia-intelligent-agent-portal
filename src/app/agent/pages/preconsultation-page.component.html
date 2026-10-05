@@ -33,7 +33,10 @@
         class="state-card loading-state"
         data-testid="preconsultation-loading"
       >
-        <div class="agent-icon agent-icon--large" aria-hidden="true">
+        <div
+          class="agent-icon agent-icon--large"
+          aria-hidden="true"
+        >
           ✦
         </div>
 
@@ -43,7 +46,10 @@
           Estamos preparando el espacio para comenzar la conversación.
         </p>
 
-        <div class="loading-dots" aria-label="Cargando">
+        <div
+          class="loading-dots"
+          aria-label="Cargando"
+        >
           <span></span>
           <span></span>
           <span></span>
@@ -54,8 +60,11 @@
         class="conversation"
         data-testid="preconsultation-chat"
       >
-        <div class="conversation__heading">
-          <div class="agent-icon" aria-hidden="true">
+        <header class="conversation__heading">
+          <div
+            class="agent-icon"
+            aria-hidden="true"
+          >
             ✦
           </div>
 
@@ -63,7 +72,7 @@
             <strong>TeleMed IA</strong>
             <span>Asistente de preconsulta</span>
           </div>
-        </div>
+        </header>
 
         <div class="messages">
           @for (message of messages(); track message.id) {
@@ -85,7 +94,10 @@
         class="state-card empty-state"
         data-testid="preconsultation-empty"
       >
-        <div class="agent-icon agent-icon--large" aria-hidden="true">
+        <div
+          class="agent-icon agent-icon--large"
+          aria-hidden="true"
+        >
           ✦
         </div>
 
@@ -99,49 +111,43 @@
           Escribe el motivo de tu consulta en la parte inferior para
           comenzar tu preconsulta.
         </p>
-
-        <!-- Se conserva para no romper el flujo previo ya cubierto por TDD. -->
-        <button
-          class="primary-button"
-          type="button"
-          data-testid="start-preconsultation"
-          (click)="startPreconsultation()"
-        >
-          Iniciar preconsulta
-          <span aria-hidden="true">→</span>
-        </button>
       </section>
     }
 
     @if (viewState() !== 'loading') {
-      <div class="consultation-composer">
+      <form
+        class="consultation-composer"
+        (submit)="$event.preventDefault(); submitConsultationReason()"
+      >
         <input
           type="text"
           data-testid="consultation-reason-input"
           placeholder="Escribe aquí tu consulta..."
           aria-label="Motivo de consulta"
+          autocomplete="off"
           [value]="consultationReason()"
           (input)="updateConsultationReason($event)"
-          (keydown.enter)="submitConsultationReason()"
         />
 
         <button
-          type="button"
+          type="submit"
           data-testid="send-consultation-reason"
           aria-label="Enviar motivo de consulta"
           [disabled]="consultationReason().trim().length === 0"
-          (click)="submitConsultationReason()"
         >
           <span aria-hidden="true">➤</span>
         </button>
-      </div>
+      </form>
     }
 
     <aside
       class="safety-notice"
       data-testid="clinical-safety-notice"
     >
-      <div class="safety-notice__icon" aria-hidden="true">
+      <div
+        class="safety-notice__icon"
+        aria-hidden="true"
+      >
         i
       </div>
 
