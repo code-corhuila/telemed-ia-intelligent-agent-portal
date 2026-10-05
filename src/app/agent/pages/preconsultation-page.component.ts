@@ -36,24 +36,15 @@ export class PreconsultationPageComponent {
   readonly messages = signal<readonly AgentMessage[]>([]);
   readonly consultationReason = signal('');
 
-  async startPreconsultation(): Promise<void> {
-    this.viewState.set('loading');
-
-    const session = await this.agentDataSource.startSession();
-
-    this.messages.set(session.messages);
-    this.viewState.set('chat');
-  }
-
   updateConsultationReason(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.consultationReason.set(input.value);
   }
 
-  submitConsultationReason(): void {
+  async submitConsultationReason(): Promise<void> {
     const reason = this.consultationReason().trim();
 
-    if (!reason) {
+    if (!reason || this.viewState() === 'loading') {
       return;
     }
 
@@ -64,12 +55,16 @@ export class PreconsultationPageComponent {
       sentAt: new Date().toISOString(),
     };
 
-    this.messages.update((messages) => [
-      ...messages,
+    this.consultationReason.set('');
+    this.viewState.set('loading');
+
+    const session = await this.agentDataSource.startSession();
+
+    this.messages.set([
       patientMessage,
+      ...session.messages,
     ]);
 
-    this.consultationReason.set('');
     this.viewState.set('chat');
   }
 }
