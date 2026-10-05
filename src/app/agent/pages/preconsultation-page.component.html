@@ -1,12 +1,15 @@
 <section class="preconsultation">
   <header class="preconsultation__header">
     <div>
-      <span class="preconsultation__eyebrow">Asistente inteligente</span>
+      <span class="preconsultation__eyebrow">
+        Asistente inteligente
+      </span>
 
       <h1>Preconsulta con TeleMed IA</h1>
 
       <p>
-        Comparte información relevante antes de tu atención con el profesional.
+        Describe tus síntomas o el motivo de tu consulta para organizar
+        la información antes de tu atención médica.
       </p>
     </div>
 
@@ -14,12 +17,12 @@
       class="status"
       data-testid="preconsultation-status"
     >
-      @if (viewState() === 'empty') {
-        Disponible
-      } @else if (viewState() === 'loading') {
+      @if (viewState() === 'loading') {
         Preparando
-      } @else {
+      } @else if (viewState() === 'chat') {
         En curso
+      } @else {
+        Disponible
       }
     </span>
   </header>
@@ -30,7 +33,7 @@
         class="state-card loading-state"
         data-testid="preconsultation-loading"
       >
-        <div class="agent-icon agent-icon--large">
+        <div class="agent-icon agent-icon--large" aria-hidden="true">
           ✦
         </div>
 
@@ -52,7 +55,7 @@
         data-testid="preconsultation-chat"
       >
         <div class="conversation__heading">
-          <div class="agent-icon">
+          <div class="agent-icon" aria-hidden="true">
             ✦
           </div>
 
@@ -82,7 +85,7 @@
         class="state-card empty-state"
         data-testid="preconsultation-empty"
       >
-        <div class="agent-icon agent-icon--large">
+        <div class="agent-icon agent-icon--large" aria-hidden="true">
           ✦
         </div>
 
@@ -90,13 +93,14 @@
           Tu asistente de preconsulta
         </span>
 
-        <h2>Inicia tu preconsulta</h2>
+        <h2>Inicia tu conversación con la IA</h2>
 
         <p>
-          Cuéntale a TeleMed IA el motivo de tu consulta antes de hablar
-          con el profesional.
+          Escribe el motivo de tu consulta en la parte inferior para
+          comenzar tu preconsulta.
         </p>
 
+        <!-- Se conserva para no romper el flujo previo ya cubierto por TDD. -->
         <button
           class="primary-button"
           type="button"
@@ -107,6 +111,30 @@
           <span aria-hidden="true">→</span>
         </button>
       </section>
+    }
+
+    @if (viewState() !== 'loading') {
+      <div class="consultation-composer">
+        <input
+          type="text"
+          data-testid="consultation-reason-input"
+          placeholder="Escribe aquí tu consulta..."
+          aria-label="Motivo de consulta"
+          [value]="consultationReason()"
+          (input)="updateConsultationReason($event)"
+          (keydown.enter)="submitConsultationReason()"
+        />
+
+        <button
+          type="button"
+          data-testid="send-consultation-reason"
+          aria-label="Enviar motivo de consulta"
+          [disabled]="consultationReason().trim().length === 0"
+          (click)="submitConsultationReason()"
+        >
+          <span aria-hidden="true">➤</span>
+        </button>
+      </div>
     }
 
     <aside
