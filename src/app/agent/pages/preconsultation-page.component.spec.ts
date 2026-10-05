@@ -91,4 +91,29 @@ it('shows the Intelligent Agent preconsultation experience', () => {
   );
 });
 
+it('shows the patient consultation reason after submitting it', () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const input = element.querySelector<HTMLInputElement>(
+    '[data-testid="consultation-reason-input"]',
+  );
+
+  const sendButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="send-consultation-reason"]',
+  );
+
+  expect(input).toBeTruthy();
+  expect(sendButton).toBeTruthy();
+
+  input!.value = 'Tengo dolor de cabeza desde ayer';
+  input!.dispatchEvent(new Event('input'));
+
+  sendButton!.click();
+  fixture.detectChanges();
+
+  expect(element.textContent).toContain(
+    'Tengo dolor de cabeza desde ayer',
+  );
+});
+
 });
