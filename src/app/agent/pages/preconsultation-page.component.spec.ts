@@ -123,4 +123,39 @@ describe('PreconsultationPageComponent', () => {
       'Tengo dolor de cabeza desde ayer',
     );
   });
+
+  it('starts the preconsultation when the patient submits the first message', () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  expect(
+    element.querySelector('[data-testid="start-preconsultation"]'),
+  ).toBeFalsy();
+
+  const input = element.querySelector<HTMLInputElement>(
+    '[data-testid="consultation-reason-input"]',
+  );
+
+  const sendButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="send-consultation-reason"]',
+  );
+
+  expect(input).toBeTruthy();
+  expect(sendButton).toBeTruthy();
+
+  input!.value = 'Tengo dolor de cabeza desde ayer';
+  input!.dispatchEvent(new Event('input'));
+
+  fixture.detectChanges();
+
+  sendButton!.click();
+  fixture.detectChanges();
+
+  expect(
+    element.querySelector('[data-testid="preconsultation-chat"]'),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'Tengo dolor de cabeza desde ayer',
+  );
+});
 });
