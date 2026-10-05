@@ -1,165 +1,163 @@
 <section class="preconsultation">
-  <header class="preconsultation__header">
-    <div>
-      <span class="preconsultation__eyebrow">
-        Asistente inteligente
-      </span>
+  <h1 class="page-title">Asistente IA</h1>
 
-      <h1>Preconsulta con TeleMed IA</h1>
-
-      <p>
-        Describe tus síntomas o el motivo de tu consulta para organizar
-        la información antes de tu atención médica.
-      </p>
-    </div>
-
-    <span
-      class="status"
-      data-testid="preconsultation-status"
-    >
-      @if (viewState() === 'loading') {
-        Preparando
-      } @else if (viewState() === 'chat') {
-        En curso
-      } @else {
-        Disponible
-      }
-    </span>
-  </header>
-
-  <div class="preconsultation__content">
-    @if (viewState() === 'loading') {
-      <section
-        class="state-card loading-state"
-        data-testid="preconsultation-loading"
-      >
-        <div
-          class="agent-icon agent-icon--large"
-          aria-hidden="true"
-        >
-          ✦
-        </div>
-
-        <h2>Preparando tu preconsulta...</h2>
+  <section
+    class="preconsultation-card"
+    data-testid="preconsultation-card"
+  >
+    <header class="preconsultation__header">
+      <div>
+        <h2>Nueva preconsulta</h2>
 
         <p>
-          Estamos preparando el espacio para comenzar la conversación.
+          Describe tus síntomas o el motivo de tu consulta para que la IA
+          organice tu información.
         </p>
+      </div>
 
-        <div
-          class="loading-dots"
-          aria-label="Cargando"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </section>
-    } @else if (viewState() === 'chat') {
-      <section
-        class="conversation"
-        data-testid="preconsultation-chat"
+      <span
+        class="status"
+        data-testid="preconsultation-status"
       >
-        <header class="conversation__heading">
+        En curso
+      </span>
+    </header>
+
+    <div class="preconsultation-card__body">
+      @if (viewState() === 'loading') {
+        <section
+          class="conversation-state loading-state"
+          data-testid="preconsultation-loading"
+        >
           <div
-            class="agent-icon"
+            class="agent-icon agent-icon--large"
             aria-hidden="true"
           >
             ✦
           </div>
 
-          <div>
-            <strong>TeleMed IA</strong>
-            <span>Asistente de preconsulta</span>
+          <h2>Preparando tu preconsulta...</h2>
+
+          <p>
+            Estamos preparando la respuesta del asistente.
+          </p>
+
+          <div
+            class="loading-dots"
+            aria-label="Cargando"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
-        </header>
-
-        <div class="messages">
-          @for (message of messages(); track message.id) {
-            <article
-              class="message"
-              [class.message--patient]="message.sender === 'PATIENT'"
-            >
-              <span class="message__sender">
-                {{ message.sender === 'AGENT' ? 'TeleMed IA' : 'Tú' }}
-              </span>
-
-              <p>{{ message.content }}</p>
-            </article>
-          }
-        </div>
-      </section>
-    } @else {
-      <section
-        class="state-card empty-state"
-        data-testid="preconsultation-empty"
-      >
-        <div
-          class="agent-icon agent-icon--large"
-          aria-hidden="true"
+        </section>
+      } @else if (viewState() === 'chat') {
+        <section
+          class="conversation"
+          data-testid="preconsultation-chat"
         >
-          ✦
-        </div>
+          <div class="messages">
+            @for (message of messages(); track message.id) {
+              <article
+                class="message"
+                [class.message--patient]="message.sender === 'PATIENT'"
+              >
+                @if (message.sender === 'AGENT') {
+                  <div class="message__agent">
+                    <div
+                      class="agent-icon"
+                      aria-hidden="true"
+                    >
+                      ✦
+                    </div>
 
-        <span class="empty-state__label">
-          Tu asistente de preconsulta
-        </span>
+                    <span class="message__sender">
+                      TeleMed IA
+                    </span>
+                  </div>
+                } @else {
+                  <span class="message__sender">
+                    Tú
+                  </span>
+                }
 
-        <h2>Inicia tu conversación con la IA</h2>
-
-        <p>
-          Escribe el motivo de tu consulta en la parte inferior para
-          comenzar tu preconsulta.
-        </p>
-      </section>
-    }
-
-    @if (viewState() !== 'loading') {
-      <form
-        class="consultation-composer"
-        (submit)="$event.preventDefault(); submitConsultationReason()"
-      >
-        <input
-          type="text"
-          data-testid="consultation-reason-input"
-          placeholder="Escribe aquí tu consulta..."
-          aria-label="Motivo de consulta"
-          autocomplete="off"
-          [value]="consultationReason()"
-          (input)="updateConsultationReason($event)"
-        />
-
-        <button
-          type="submit"
-          data-testid="send-consultation-reason"
-          aria-label="Enviar motivo de consulta"
-          [disabled]="consultationReason().trim().length === 0"
+                <p>{{ message.content }}</p>
+              </article>
+            }
+          </div>
+        </section>
+      } @else {
+        <section
+          class="conversation-state empty-state"
+          data-testid="preconsultation-empty"
         >
-          <span aria-hidden="true">➤</span>
-        </button>
-      </form>
-    }
+          <div
+            class="agent-icon agent-icon--large"
+            aria-hidden="true"
+          >
+            ✦
+          </div>
 
-    <aside
-      class="safety-notice"
-      data-testid="clinical-safety-notice"
+          <h2>Inicia tu conversación con la IA</h2>
+
+          <p>
+            Escribe tu mensaje en la parte inferior para comenzar tu
+            preconsulta.
+          </p>
+        </section>
+      }
+    </div>
+
+@if (viewState() !== 'loading') {
+  <form
+    class="consultation-composer"
+    data-testid="consultation-composer"
+    (submit)="$event.preventDefault(); submitConsultationReason()"
+  >
+    <div class="consultation-composer__field">
+      <input
+        type="text"
+        data-testid="consultation-reason-input"
+        placeholder="Escribe aquí tu consulta..."
+        aria-label="Motivo de consulta"
+        autocomplete="off"
+        [value]="consultationReason()"
+        (input)="updateConsultationReason($event)"
+      />
+    </div>
+
+    <button
+      class="send-button"
+      type="submit"
+      data-testid="send-consultation-reason"
+      aria-label="Enviar mensaje"
+      [disabled]="consultationReason().trim().length === 0"
     >
-      <div
-        class="safety-notice__icon"
-        aria-hidden="true"
-      >
-        i
-      </div>
+      <span aria-hidden="true">➤</span>
+    </button>
+  </form>
+}
+  </section>
 
-      <div>
-        <strong>Información importante</strong>
+  <aside
+    class="safety-notice"
+    data-testid="clinical-safety-notice"
+  >
+    <div
+      class="safety-notice__icon"
+      aria-hidden="true"
+    >
+      i
+    </div>
 
-        <p>
-          TeleMed IA no diagnostica ni prescribe medicamentos.
-          La información recopilada será utilizada como contexto previo
-          para el profesional de salud.
-        </p>
-      </div>
-    </aside>
-  </div>
+    <div>
+      <strong>Información importante</strong>
+
+      <p>
+        TeleMed IA no diagnostica ni prescribe medicamentos.
+        La información recopilada será utilizada como contexto previo
+        para el profesional de salud.
+      </p>
+    </div>
+  </aside>
 </section>
