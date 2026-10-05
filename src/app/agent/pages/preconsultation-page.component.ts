@@ -34,6 +34,7 @@ export class PreconsultationPageComponent {
 
   readonly viewState = signal<ViewState>('empty');
   readonly messages = signal<readonly AgentMessage[]>([]);
+  readonly consultationReason = signal('');
 
   async startPreconsultation(): Promise<void> {
     this.viewState.set('loading');
@@ -41,6 +42,34 @@ export class PreconsultationPageComponent {
     const session = await this.agentDataSource.startSession();
 
     this.messages.set(session.messages);
+    this.viewState.set('chat');
+  }
+
+  updateConsultationReason(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.consultationReason.set(input.value);
+  }
+
+  submitConsultationReason(): void {
+    const reason = this.consultationReason().trim();
+
+    if (!reason) {
+      return;
+    }
+
+    const patientMessage: AgentMessage = {
+      id: `patient-${this.messages().length + 1}`,
+      sender: 'PATIENT',
+      content: reason,
+      sentAt: new Date().toISOString(),
+    };
+
+    this.messages.update((messages) => [
+      ...messages,
+      patientMessage,
+    ]);
+
+    this.consultationReason.set('');
     this.viewState.set('chat');
   }
 }
