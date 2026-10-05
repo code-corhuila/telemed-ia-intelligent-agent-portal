@@ -175,4 +175,31 @@ describe('PreconsultationPageComponent', () => {
       'Tengo dolor de cabeza desde ayer',
     );
   });
+
+  it('shows the MVP conversation layout', () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  expect(element.textContent).toContain(
+    'Nueva preconsulta',
+  );
+
+  const card = element.querySelector<HTMLElement>(
+    '[data-testid="preconsultation-card"]',
+  );
+
+  expect(card).toBeTruthy();
+
+  const composer = card?.querySelector(
+    '[data-testid="consultation-composer"]',
+  );
+
+  expect(composer).toBeTruthy();
+
+  const status = element.querySelector<HTMLElement>(
+    '[data-testid="preconsultation-status"]',
+  );
+
+  expect(status).toBeTruthy();
+  expect(status?.textContent).toContain('En curso');
+});
 });
