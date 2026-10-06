@@ -19,7 +19,11 @@
         class="status"
         data-testid="preconsultation-status"
       >
-        En curso
+        @if (viewState() === 'completed') {
+          Completada
+        } @else {
+          En curso
+        }
       </span>
     </header>
 
@@ -51,6 +55,53 @@
             <span></span>
           </div>
         </section>
+      } @else if (viewState() === 'completed') {
+        <section
+          class="preconsultation-summary"
+          data-testid="preconsultation-summary"
+        >
+          <span class="summary__eyebrow">
+            Preconsulta completada
+          </span>
+
+          <h2>Resumen de preconsulta</h2>
+
+          @if (summary(); as currentSummary) {
+            <div class="summary-grid">
+              <article>
+                <span>Motivo de consulta</span>
+
+                <p>
+                  {{ currentSummary.consultationReason }}
+                </p>
+              </article>
+
+              <article>
+                <span>Duración</span>
+
+                <p>
+                  {{ currentSummary.duration }}
+                </p>
+              </article>
+
+              <article>
+                <span>Síntomas asociados</span>
+
+                <p>
+                  {{ currentSummary.symptoms }}
+                </p>
+              </article>
+
+              <article>
+                <span>Antecedentes relevantes</span>
+
+                <p>
+                  {{ currentSummary.relevantHistory }}
+                </p>
+              </article>
+            </div>
+          }
+        </section>
       } @else if (viewState() === 'chat') {
         <section
           class="conversation"
@@ -81,7 +132,9 @@
                   </span>
                 }
 
-                <p>{{ message.content }}</p>
+                <p>
+                  {{ message.content }}
+                </p>
               </article>
             }
           </div>
@@ -108,35 +161,38 @@
       }
     </div>
 
-@if (viewState() !== 'loading') {
-  <form
-    class="consultation-composer"
-    data-testid="consultation-composer"
-    (submit)="$event.preventDefault(); submitConsultationReason()"
-  >
-    <div class="consultation-composer__field">
-      <input
-        type="text"
-        data-testid="consultation-reason-input"
-        placeholder="Escribe aquí tu consulta..."
-        aria-label="Motivo de consulta"
-        autocomplete="off"
-        [value]="consultationReason()"
-        (input)="updateConsultationReason($event)"
-      />
-    </div>
+    @if (
+      viewState() === 'empty' ||
+      viewState() === 'chat'
+    ) {
+      <form
+        class="consultation-composer"
+        data-testid="consultation-composer"
+        (submit)="$event.preventDefault(); submitConsultationReason()"
+      >
+        <div class="consultation-composer__field">
+          <input
+            type="text"
+            data-testid="consultation-reason-input"
+            placeholder="Escribe aquí tu consulta..."
+            aria-label="Motivo de consulta"
+            autocomplete="off"
+            [value]="consultationReason()"
+            (input)="updateConsultationReason($event)"
+          />
+        </div>
 
-    <button
-      class="send-button"
-      type="submit"
-      data-testid="send-consultation-reason"
-      aria-label="Enviar mensaje"
-      [disabled]="consultationReason().trim().length === 0"
-    >
-      <span aria-hidden="true">➤</span>
-    </button>
-  </form>
-}
+        <button
+          class="send-button"
+          type="submit"
+          data-testid="send-consultation-reason"
+          aria-label="Enviar mensaje"
+          [disabled]="consultationReason().trim().length === 0"
+        >
+          <span aria-hidden="true">➤</span>
+        </button>
+      </form>
+    }
   </section>
 
   <aside
