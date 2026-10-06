@@ -11,8 +11,13 @@ import {
 } from '../data/agent-data-source';
 import { SyntheticAgentService } from '../data/synthetic-agent.service';
 import { AgentMessage } from '../model/agent-message';
+import { PreconsultationSummary } from '../model/preconsultation-summary';
 
-type ViewState = 'empty' | 'loading' | 'chat';
+type ViewState =
+  | 'empty'
+  | 'loading'
+  | 'chat'
+  | 'completed';
 
 @Component({
   selector: 'app-preconsultation-page',
@@ -35,6 +40,8 @@ export class PreconsultationPageComponent {
   readonly viewState = signal<ViewState>('empty');
   readonly messages = signal<readonly AgentMessage[]>([]);
   readonly consultationReason = signal('');
+  readonly summary =
+    signal<PreconsultationSummary | null>(null);
 
   private readonly sessionId = signal<string | null>(null);
   private readonly patientTurn = signal(0);
@@ -47,7 +54,11 @@ export class PreconsultationPageComponent {
   async submitConsultationReason(): Promise<void> {
     const reason = this.consultationReason().trim();
 
-    if (!reason || this.viewState() === 'loading') {
+    if (
+      !reason ||
+      this.viewState() === 'loading' ||
+      this.viewState() === 'completed'
+    ) {
       return;
     }
 
@@ -112,21 +123,29 @@ export class PreconsultationPageComponent {
 
     this.viewState.set('loading');
 
-    const agentMessage =
+    const result =
       await this.agentDataSource.sendMessage(
         sessionId,
         reason,
         turn,
       );
 
-    this.messages.update((messages) => [
-      ...messages,
-      agentMessage,
-    ]);
+    if (result.message) {
+      this.messages.update((messages) => [
+        ...messages,
+        result.message!,
+      ]);
+    }
 
     this.patientTurn.update(
       (currentTurn) => currentTurn + 1,
     );
+
+    if (result.completed && result.summary) {
+      this.summary.set(result.summary);
+      this.viewState.set('completed');
+      return;
+    }
 
     this.viewState.set('chat');
   }
