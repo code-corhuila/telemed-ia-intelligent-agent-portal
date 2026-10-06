@@ -10,7 +10,10 @@ describe('PreconsultationPageComponent', () => {
       imports: [PreconsultationPageComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PreconsultationPageComponent);
+    fixture = TestBed.createComponent(
+      PreconsultationPageComponent,
+    );
+
     fixture.detectChanges();
   });
 
@@ -18,7 +21,9 @@ describe('PreconsultationPageComponent', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(
-      element.querySelector('[data-testid="preconsultation-empty"]'),
+      element.querySelector(
+        '[data-testid="preconsultation-empty"]',
+      ),
     ).toBeTruthy();
 
     expect(element.textContent).toContain(
@@ -26,11 +31,15 @@ describe('PreconsultationPageComponent', () => {
     );
 
     expect(
-      element.querySelector('[data-testid="start-preconsultation"]'),
+      element.querySelector(
+        '[data-testid="start-preconsultation"]',
+      ),
     ).toBeFalsy();
 
     expect(
-      element.querySelector('[data-testid="consultation-reason-input"]'),
+      element.querySelector(
+        '[data-testid="consultation-reason-input"]',
+      ),
     ).toBeTruthy();
   });
 
@@ -54,11 +63,13 @@ describe('PreconsultationPageComponent', () => {
     fixture.detectChanges();
 
     expect(
-      element.querySelector('[data-testid="preconsultation-loading"]'),
+      element.querySelector(
+        '[data-testid="preconsultation-loading"]',
+      ),
     ).toBeTruthy();
   });
 
-  it('shows the first synthetic agent message after starting the preconsultation', async () => {
+  it('asks about duration after receiving the consultation reason', async () => {
     const element: HTMLElement = fixture.nativeElement;
 
     const input = element.querySelector<HTMLInputElement>(
@@ -82,11 +93,73 @@ describe('PreconsultationPageComponent', () => {
     fixture.detectChanges();
 
     expect(
-      element.querySelector('[data-testid="preconsultation-chat"]'),
+      element.querySelector(
+        '[data-testid="preconsultation-chat"]',
+      ),
     ).toBeTruthy();
 
     expect(element.textContent).toContain(
-      'Hola, soy el asistente de preconsulta de TeleMed IA',
+      'Tengo dolor de cabeza desde ayer',
+    );
+
+    expect(element.textContent).toContain(
+      '¿Desde hace cuánto tiempo presentas esta molestia?',
+    );
+  });
+
+  it('keeps the conversation and asks about symptoms after duration', async () => {
+    const element: HTMLElement = fixture.nativeElement;
+
+    let input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
+    );
+
+    let sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
+
+    input!.value = 'Tengo dolor de cabeza desde ayer';
+    input!.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    sendButton!.click();
+    fixture.detectChanges();
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    fixture.detectChanges();
+
+    input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
+    );
+
+    sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
+
+    input!.value = 'Desde ayer en la tarde';
+    input!.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    sendButton!.click();
+    fixture.detectChanges();
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    fixture.detectChanges();
+
+    expect(element.textContent).toContain(
+      'Tengo dolor de cabeza desde ayer',
+    );
+
+    expect(element.textContent).toContain(
+      'Desde ayer en la tarde',
+    );
+
+    expect(element.textContent).toContain(
+      '¿Presentas otros síntomas además de la molestia principal?',
     );
   });
 
@@ -98,11 +171,15 @@ describe('PreconsultationPageComponent', () => {
     );
 
     expect(
-      element.querySelector('[data-testid="preconsultation-status"]'),
+      element.querySelector(
+        '[data-testid="preconsultation-status"]',
+      ),
     ).toBeTruthy();
 
     expect(
-      element.querySelector('[data-testid="clinical-safety-notice"]'),
+      element.querySelector(
+        '[data-testid="clinical-safety-notice"]',
+      ),
     ).toBeTruthy();
 
     expect(element.textContent).toContain(
@@ -144,7 +221,9 @@ describe('PreconsultationPageComponent', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(
-      element.querySelector('[data-testid="start-preconsultation"]'),
+      element.querySelector(
+        '[data-testid="start-preconsultation"]',
+      ),
     ).toBeFalsy();
 
     const input = element.querySelector<HTMLInputElement>(
@@ -168,7 +247,9 @@ describe('PreconsultationPageComponent', () => {
     fixture.detectChanges();
 
     expect(
-      element.querySelector('[data-testid="preconsultation-chat"]'),
+      element.querySelector(
+        '[data-testid="preconsultation-chat"]',
+      ),
     ).toBeTruthy();
 
     expect(element.textContent).toContain(
@@ -177,29 +258,29 @@ describe('PreconsultationPageComponent', () => {
   });
 
   it('shows the MVP conversation layout', () => {
-  const element: HTMLElement = fixture.nativeElement;
+    const element: HTMLElement = fixture.nativeElement;
 
-  expect(element.textContent).toContain(
-    'Nueva preconsulta',
-  );
+    expect(element.textContent).toContain(
+      'Nueva preconsulta',
+    );
 
-  const card = element.querySelector<HTMLElement>(
-    '[data-testid="preconsultation-card"]',
-  );
+    const card = element.querySelector<HTMLElement>(
+      '[data-testid="preconsultation-card"]',
+    );
 
-  expect(card).toBeTruthy();
+    expect(card).toBeTruthy();
 
-  const composer = card?.querySelector(
-    '[data-testid="consultation-composer"]',
-  );
+    const composer = card?.querySelector(
+      '[data-testid="consultation-composer"]',
+    );
 
-  expect(composer).toBeTruthy();
+    expect(composer).toBeTruthy();
 
-  const status = element.querySelector<HTMLElement>(
-    '[data-testid="preconsultation-status"]',
-  );
+    const status = element.querySelector<HTMLElement>(
+      '[data-testid="preconsultation-status"]',
+    );
 
-  expect(status).toBeTruthy();
-  expect(status?.textContent).toContain('En curso');
-});
+    expect(status).toBeTruthy();
+    expect(status?.textContent).toContain('En curso');
+  });
 });
