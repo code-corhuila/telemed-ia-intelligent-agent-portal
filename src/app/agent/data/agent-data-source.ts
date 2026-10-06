@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
-import { AgentMessage } from '../model/agent-message';
 import { AgentSession } from '../model/agent-session';
+import { AgentTurnResult } from '../model/agent-turn-result';
 
 export interface AgentDataSource {
   startSession(
@@ -12,7 +12,7 @@ export interface AgentDataSource {
     sessionId: string,
     patientMessage: string,
     turn: number,
-  ): Promise<AgentMessage>;
+  ): Promise<AgentTurnResult>;
 }
 
 export const AGENT_DATA_SOURCE =
