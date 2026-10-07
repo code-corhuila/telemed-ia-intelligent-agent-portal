@@ -48,31 +48,53 @@ describe('PreconsultationPageComponent', () => {
     ).toBeTruthy();
   });
 
-  it('shows loading after submitting the first message', () => {
-    const element: HTMLElement = fixture.nativeElement;
+it('keeps the conversation visible while the agent is responding', () => {
+  const element: HTMLElement = fixture.nativeElement;
 
-    const input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
+  const input = element.querySelector<HTMLInputElement>(
+    '[data-testid="consultation-reason-input"]',
+  );
 
-    const sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
+  const sendButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="send-consultation-reason"]',
+  );
 
-    input!.value = 'Tengo dolor de cabeza desde ayer';
-    input!.dispatchEvent(new Event('input'));
+  input!.value = 'Tengo dolor de cabeza desde ayer';
+  input!.dispatchEvent(new Event('input'));
 
-    fixture.detectChanges();
+  fixture.detectChanges();
 
-    sendButton!.click();
-    fixture.detectChanges();
+  sendButton!.click();
+  fixture.detectChanges();
 
-    expect(
-      element.querySelector(
-        '[data-testid="preconsultation-loading"]',
-      ),
-    ).toBeTruthy();
-  });
+  expect(
+    element.querySelector(
+      '[data-testid="preconsultation-loading"]',
+    ),
+  ).toBeFalsy();
+
+  expect(
+    element.querySelector(
+      '[data-testid="preconsultation-chat"]',
+    ),
+  ).toBeTruthy();
+
+  expect(
+    element.querySelector(
+      '[data-testid="consultation-composer"]',
+    ),
+  ).toBeTruthy();
+
+  expect(
+    element.querySelector(
+      '[data-testid="agent-typing"]',
+    ),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'Tengo dolor de cabeza desde ayer',
+  );
+});
 
   it('asks about duration after receiving the consultation reason', async () => {
     const element: HTMLElement = fixture.nativeElement;
@@ -415,5 +437,80 @@ it('completes the preconsultation without exposing the clinical summary to the p
       '[data-testid="consultation-composer"]',
     ),
   ).toBeFalsy();
+});
+
+it('returns focus to the message input after the agent responds', async () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const input = element.querySelector<HTMLInputElement>(
+    '[data-testid="consultation-reason-input"]',
+  );
+
+  const sendButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="send-consultation-reason"]',
+  );
+
+  input!.value = 'Tengo dolor de cabeza desde ayer';
+  input!.dispatchEvent(new Event('input'));
+
+  fixture.detectChanges();
+
+  sendButton!.click();
+  fixture.detectChanges();
+
+  await new Promise((resolve) =>
+    setTimeout(resolve, 700),
+  );
+
+  fixture.detectChanges();
+
+  const currentInput =
+    element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
+    );
+
+  expect(currentInput).toBeTruthy();
+  expect(document.activeElement).toBe(currentInput);
+});
+it('removes the typing indicator after the agent responds', async () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const input = element.querySelector<HTMLInputElement>(
+    '[data-testid="consultation-reason-input"]',
+  );
+
+  const sendButton = element.querySelector<HTMLButtonElement>(
+    '[data-testid="send-consultation-reason"]',
+  );
+
+  input!.value = 'Tengo dolor de cabeza desde ayer';
+  input!.dispatchEvent(new Event('input'));
+
+  fixture.detectChanges();
+
+  sendButton!.click();
+  fixture.detectChanges();
+
+  expect(
+    element.querySelector(
+      '[data-testid="agent-typing"]',
+    ),
+  ).toBeTruthy();
+
+  await new Promise((resolve) =>
+    setTimeout(resolve, 700),
+  );
+
+  fixture.detectChanges();
+
+  expect(
+    element.querySelector(
+      '[data-testid="agent-typing"]',
+    ),
+  ).toBeFalsy();
+
+  expect(element.textContent).toContain(
+    '¿Desde hace cuánto tiempo presentas esta molestia?',
+  );
 });
 });
