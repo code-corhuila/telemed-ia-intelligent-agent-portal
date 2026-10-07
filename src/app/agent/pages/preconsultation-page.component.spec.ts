@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from 'vitest';
 import { PreconsultationPageComponent } from './preconsultation-page.component';
 
 describe('PreconsultationPageComponent', () => {
@@ -321,10 +326,12 @@ describe('PreconsultationPageComponent', () => {
   );
 });
 
-it('completes the preconsultation and shows the synthetic summary', async () => {
+it('completes the preconsultation without exposing the clinical summary to the patient', async () => {
   const element: HTMLElement = fixture.nativeElement;
 
-  const submitMessage = async (message: string): Promise<void> => {
+  const submitMessage = async (
+    message: string,
+  ): Promise<void> => {
     const input = element.querySelector<HTMLInputElement>(
       '[data-testid="consultation-reason-input"]',
     );
@@ -344,48 +351,69 @@ it('completes the preconsultation and shows the synthetic summary', async () => 
     sendButton!.click();
     fixture.detectChanges();
 
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await new Promise((resolve) =>
+      setTimeout(resolve, 700),
+    );
 
     fixture.detectChanges();
   };
 
-  await submitMessage('Tengo dolor de cabeza desde ayer');
-  await submitMessage('Desde ayer en la tarde');
-  await submitMessage('También tengo un poco de mareo');
-  await submitMessage('No tengo antecedentes médicos relevantes');
-
-  expect(
-    element.querySelector('[data-testid="preconsultation-summary"]'),
-  ).toBeTruthy();
-
-  expect(element.textContent).toContain(
-    'Resumen de preconsulta',
-  );
-
-  expect(element.textContent).toContain(
+  await submitMessage(
     'Tengo dolor de cabeza desde ayer',
   );
 
-  expect(element.textContent).toContain(
+  await submitMessage(
     'Desde ayer en la tarde',
   );
 
-  expect(element.textContent).toContain(
+  await submitMessage(
     'También tengo un poco de mareo',
   );
 
-  expect(element.textContent).toContain(
+  await submitMessage(
     'No tengo antecedentes médicos relevantes',
   );
+
+  expect(
+    element.querySelector(
+      '[data-testid="preconsultation-completed"]',
+    ),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'Preconsulta finalizada',
+  );
+
+  expect(element.textContent).toContain(
+    'Hemos recopilado la información necesaria para tu consulta.',
+  );
+
+  expect(element.textContent).toContain(
+    'Esta información estará disponible para el profesional de salud el día de tu cita.',
+  );
+
+  expect(element.textContent).not.toContain(
+    'Resumen de preconsulta',
+  );
+
+  expect(
+    element.querySelector(
+      '[data-testid="preconsultation-summary"]',
+    ),
+  ).toBeFalsy();
 
   const status = element.querySelector<HTMLElement>(
     '[data-testid="preconsultation-status"]',
   );
 
-  expect(status?.textContent).toContain('Completada');
+  expect(status?.textContent).toContain(
+    'Completada',
+  );
 
   expect(
-    element.querySelector('[data-testid="consultation-composer"]'),
+    element.querySelector(
+      '[data-testid="consultation-composer"]',
+    ),
   ).toBeFalsy();
 });
 });
