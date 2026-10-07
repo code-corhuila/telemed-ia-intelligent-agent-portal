@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  ViewChild,
   inject,
   signal,
 } from '@angular/core';
@@ -14,7 +16,6 @@ import { AgentMessage } from '../model/agent-message';
 
 type ViewState =
   | 'empty'
-  | 'loading'
   | 'chat'
   | 'completed';
 
@@ -36,9 +37,16 @@ export class PreconsultationPageComponent {
   private readonly agentDataSource: AgentDataSource =
     inject(AGENT_DATA_SOURCE);
 
+  @ViewChild('messagesContainer')
+  private messagesContainer?: ElementRef<HTMLElement>;
+
+  @ViewChild('messageInput')
+  private messageInput?: ElementRef<HTMLInputElement>;
+
   readonly viewState = signal<ViewState>('empty');
   readonly messages = signal<readonly AgentMessage[]>([]);
   readonly consultationReason = signal('');
+  readonly isResponding = signal(false);
 
   private readonly sessionId = signal<string | null>(null);
   private readonly patientTurn = signal(0);
@@ -53,7 +61,7 @@ export class PreconsultationPageComponent {
 
     if (
       !reason ||
-      this.viewState() === 'loading' ||
+      this.isResponding() ||
       this.viewState() === 'completed'
     ) {
       return;
@@ -90,20 +98,29 @@ export class PreconsultationPageComponent {
     reason: string,
     patientMessage: AgentMessage,
   ): Promise<void> {
-    this.viewState.set('loading');
+    this.messages.set([
+      patientMessage,
+    ]);
+
+    this.viewState.set('chat');
+    this.isResponding.set(true);
+
+    this.keepConversationAtBottom();
 
     const session =
       await this.agentDataSource.startSession(reason);
 
     this.sessionId.set(session.id);
 
-    this.messages.set([
-      patientMessage,
+    this.messages.update((messages) => [
+      ...messages,
       ...session.messages,
     ]);
 
     this.patientTurn.set(1);
-    this.viewState.set('chat');
+    this.isResponding.set(false);
+
+    this.keepConversationAtBottom(true);
   }
 
   private async continueConversation(
@@ -118,7 +135,9 @@ export class PreconsultationPageComponent {
       patientMessage,
     ]);
 
-    this.viewState.set('loading');
+    this.isResponding.set(true);
+
+    this.keepConversationAtBottom();
 
     const result =
       await this.agentDataSource.sendMessage(
@@ -138,11 +157,31 @@ export class PreconsultationPageComponent {
       (currentTurn) => currentTurn + 1,
     );
 
+    this.isResponding.set(false);
+
     if (result.completed) {
       this.viewState.set('completed');
       return;
     }
 
-    this.viewState.set('chat');
+    this.keepConversationAtBottom(true);
+  }
+
+  private keepConversationAtBottom(
+    focusInput = false,
+  ): void {
+    setTimeout(() => {
+      const container =
+        this.messagesContainer?.nativeElement;
+
+      if (container) {
+        container.scrollTop =
+          container.scrollHeight;
+      }
+
+      if (focusInput) {
+        this.messageInput?.nativeElement.focus();
+      }
+    });
   }
 }

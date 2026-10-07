@@ -28,34 +28,7 @@
     </header>
 
     <div class="preconsultation-card__body">
-      @if (viewState() === 'loading') {
-        <section
-          class="conversation-state loading-state"
-          data-testid="preconsultation-loading"
-        >
-          <div
-            class="agent-icon agent-icon--large"
-            aria-hidden="true"
-          >
-            ✦
-          </div>
-
-          <h2>Preparando tu preconsulta...</h2>
-
-          <p>
-            Estamos preparando la respuesta del asistente.
-          </p>
-
-          <div
-            class="loading-dots"
-            aria-label="Cargando"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </section>
-      } @else if (viewState() === 'completed') {
+      @if (viewState() === 'completed') {
         <section
           class="conversation-state completed-state"
           data-testid="preconsultation-completed"
@@ -83,7 +56,10 @@
           class="conversation"
           data-testid="preconsultation-chat"
         >
-          <div class="messages">
+          <div
+            #messagesContainer
+            class="messages"
+          >
             @for (message of messages(); track message.id) {
               <article
                 class="message"
@@ -113,6 +89,35 @@
                 </p>
               </article>
             }
+
+            @if (isResponding()) {
+              <article
+                class="message message--typing"
+                data-testid="agent-typing"
+              >
+                <div class="message__agent">
+                  <div
+                    class="agent-icon"
+                    aria-hidden="true"
+                  >
+                    ✦
+                  </div>
+
+                  <span class="message__sender">
+                    TeleMed IA
+                  </span>
+                </div>
+
+                <div
+                  class="typing-indicator"
+                  aria-label="TeleMed IA está escribiendo"
+                >
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </article>
+            }
           </div>
         </section>
       } @else {
@@ -137,10 +142,7 @@
       }
     </div>
 
-    @if (
-      viewState() === 'empty' ||
-      viewState() === 'chat'
-    ) {
+    @if (viewState() !== 'completed') {
       <form
         class="consultation-composer"
         data-testid="consultation-composer"
@@ -148,12 +150,14 @@
       >
         <div class="consultation-composer__field">
           <input
+            #messageInput
             type="text"
             data-testid="consultation-reason-input"
             placeholder="Escribe aquí tu consulta..."
             aria-label="Motivo de consulta"
             autocomplete="off"
             [value]="consultationReason()"
+            [disabled]="isResponding()"
             (input)="updateConsultationReason($event)"
           />
         </div>
@@ -163,7 +167,10 @@
           type="submit"
           data-testid="send-consultation-reason"
           aria-label="Enviar mensaje"
-          [disabled]="consultationReason().trim().length === 0"
+          [disabled]="
+            consultationReason().trim().length === 0 ||
+            isResponding()
+          "
         >
           <span aria-hidden="true">➤</span>
         </button>
