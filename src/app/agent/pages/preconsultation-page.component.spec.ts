@@ -283,4 +283,109 @@ describe('PreconsultationPageComponent', () => {
     expect(status).toBeTruthy();
     expect(status?.textContent).toContain('En curso');
   });
+  it('asks about relevant medical history after symptoms', async () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const submitMessage = async (message: string): Promise<void> => {
+    const input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
+    );
+
+    const sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
+
+    input!.value = message;
+    input!.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    sendButton!.click();
+    fixture.detectChanges();
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    fixture.detectChanges();
+  };
+
+  await submitMessage('Tengo dolor de cabeza desde ayer');
+  await submitMessage('Desde ayer en la tarde');
+  await submitMessage('También tengo un poco de mareo');
+
+  expect(element.textContent).toContain(
+    'También tengo un poco de mareo',
+  );
+
+  expect(element.textContent).toContain(
+    '¿Tienes antecedentes médicos relevantes que quieras mencionar?',
+  );
+});
+
+it('completes the preconsultation and shows the synthetic summary', async () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  const submitMessage = async (message: string): Promise<void> => {
+    const input = element.querySelector<HTMLInputElement>(
+      '[data-testid="consultation-reason-input"]',
+    );
+
+    const sendButton = element.querySelector<HTMLButtonElement>(
+      '[data-testid="send-consultation-reason"]',
+    );
+
+    expect(input).toBeTruthy();
+    expect(sendButton).toBeTruthy();
+
+    input!.value = message;
+    input!.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges();
+
+    sendButton!.click();
+    fixture.detectChanges();
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    fixture.detectChanges();
+  };
+
+  await submitMessage('Tengo dolor de cabeza desde ayer');
+  await submitMessage('Desde ayer en la tarde');
+  await submitMessage('También tengo un poco de mareo');
+  await submitMessage('No tengo antecedentes médicos relevantes');
+
+  expect(
+    element.querySelector('[data-testid="preconsultation-summary"]'),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'Resumen de preconsulta',
+  );
+
+  expect(element.textContent).toContain(
+    'Tengo dolor de cabeza desde ayer',
+  );
+
+  expect(element.textContent).toContain(
+    'Desde ayer en la tarde',
+  );
+
+  expect(element.textContent).toContain(
+    'También tengo un poco de mareo',
+  );
+
+  expect(element.textContent).toContain(
+    'No tengo antecedentes médicos relevantes',
+  );
+
+  const status = element.querySelector<HTMLElement>(
+    '[data-testid="preconsultation-status"]',
+  );
+
+  expect(status?.textContent).toContain('Completada');
+
+  expect(
+    element.querySelector('[data-testid="consultation-composer"]'),
+  ).toBeFalsy();
+});
 });

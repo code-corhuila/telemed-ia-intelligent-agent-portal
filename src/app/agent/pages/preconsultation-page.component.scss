@@ -201,18 +201,6 @@
   }
 }
 
-.attachment-button {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  flex-shrink: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #8b99ac;
-  font-size: 1rem;
-}
 
 .send-button {
   display: grid;
@@ -301,5 +289,52 @@
   .send-button {
     width: 48px;
     height: 48px;
+  }
+}
+
+.preconsultation-summary {
+  padding: 2rem;
+
+  h2 {
+    margin: 0.35rem 0 1.5rem;
+    color: #172b4d;
+    font-size: 1.5rem;
+  }
+}
+
+.summary__eyebrow {
+  color: #2c6bed;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  article {
+    padding: 1rem;
+    border: 1px solid #e1e7ef;
+    border-radius: 12px;
+    background: #f8fafc;
+  }
+
+  span {
+    color: #75839a;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0.4rem 0 0;
+    color: #172b4d;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 700px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
   }
 }
