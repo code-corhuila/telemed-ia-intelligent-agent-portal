@@ -1,24 +1,53 @@
 import { Injectable } from '@angular/core';
 
 import { AgentDataSource } from './agent-data-source';
+import { AgentMessage } from '../model/agent-message';
 import { AgentSession } from '../model/agent-session';
 
 @Injectable()
 export class SyntheticAgentService implements AgentDataSource {
-  async startSession(): Promise<AgentSession> {
+  async startSession(
+    consultationReason: string,
+  ): Promise<AgentSession> {
     await this.delay(600);
 
     return {
       id: '3d8844f4-1ca0-4d89-9e30-566f9857c1aa',
       messages: [
         {
-          id: 'a2f16b43-6381-4d50-a75c-996f47298046',
+          id: 'agent-duration-question',
           sender: 'AGENT',
           content:
-            'Hola, soy el asistente de preconsulta de TeleMed IA. Cuéntame cuál es el motivo de tu consulta.',
-          sentAt: '2026-10-04T18:00:00Z',
+            '¿Desde hace cuánto tiempo presentas esta molestia?',
+          sentAt: new Date().toISOString(),
         },
       ],
+    };
+  }
+
+  async sendMessage(
+    sessionId: string,
+    patientMessage: string,
+    turn: number,
+  ): Promise<AgentMessage> {
+    await this.delay(600);
+
+    if (turn === 1) {
+      return {
+        id: 'agent-symptoms-question',
+        sender: 'AGENT',
+        content:
+          '¿Presentas otros síntomas además de la molestia principal?',
+        sentAt: new Date().toISOString(),
+      };
+    }
+
+    return {
+      id: `agent-follow-up-${turn}`,
+      sender: 'AGENT',
+      content:
+        '¿Tienes antecedentes médicos relevantes que quieras mencionar?',
+      sentAt: new Date().toISOString(),
     };
   }
 
