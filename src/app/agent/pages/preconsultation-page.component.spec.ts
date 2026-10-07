@@ -73,4 +73,22 @@ it('shows the first synthetic agent message after starting the preconsultation',
   );
 });
 
+it('shows the Intelligent Agent preconsultation experience', () => {
+  const element: HTMLElement = fixture.nativeElement;
+
+  expect(element.textContent).toContain('Preconsulta con TeleMed IA');
+
+  expect(
+    element.querySelector('[data-testid="preconsultation-status"]'),
+  ).toBeTruthy();
+
+  expect(
+    element.querySelector('[data-testid="clinical-safety-notice"]'),
+  ).toBeTruthy();
+
+  expect(element.textContent).toContain(
+    'TeleMed IA no diagnostica ni prescribe medicamentos',
+  );
+});
+
 });
