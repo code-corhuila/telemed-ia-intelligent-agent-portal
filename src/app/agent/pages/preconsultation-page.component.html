@@ -57,50 +57,26 @@
         </section>
       } @else if (viewState() === 'completed') {
         <section
-          class="preconsultation-summary"
-          data-testid="preconsultation-summary"
+          class="conversation-state completed-state"
+          data-testid="preconsultation-completed"
         >
-          <span class="summary__eyebrow">
-            Preconsulta completada
-          </span>
+          <div
+            class="agent-icon agent-icon--large"
+            aria-hidden="true"
+          >
+            ✓
+          </div>
 
-          <h2>Resumen de preconsulta</h2>
+          <h2>Preconsulta finalizada</h2>
 
-          @if (summary(); as currentSummary) {
-            <div class="summary-grid">
-              <article>
-                <span>Motivo de consulta</span>
+          <p>
+            Hemos recopilado la información necesaria para tu consulta.
+          </p>
 
-                <p>
-                  {{ currentSummary.consultationReason }}
-                </p>
-              </article>
-
-              <article>
-                <span>Duración</span>
-
-                <p>
-                  {{ currentSummary.duration }}
-                </p>
-              </article>
-
-              <article>
-                <span>Síntomas asociados</span>
-
-                <p>
-                  {{ currentSummary.symptoms }}
-                </p>
-              </article>
-
-              <article>
-                <span>Antecedentes relevantes</span>
-
-                <p>
-                  {{ currentSummary.relevantHistory }}
-                </p>
-              </article>
-            </div>
-          }
+          <p>
+            Esta información estará disponible para el profesional de salud
+            el día de tu cita.
+          </p>
         </section>
       } @else if (viewState() === 'chat') {
         <section
