@@ -16,27 +16,30 @@
   --telemed-success-border: #cce9d5;
 
   display: block;
+  width: 100%;
   height: 100%;
   min-height: 0;
 }
 
+/* PAGE */
+
 .preconsultation {
   display: flex;
   width: 100%;
-  height: calc(100dvh - 68px - 4rem);
+  height: 100%;
   min-height: 0;
   flex-direction: column;
   overflow: hidden;
   color: var(--telemed-text);
 }
 
-/* PAGE TITLE */
+/* TITLE */
 
 .page-title {
   flex: 0 0 auto;
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.75rem;
   color: var(--telemed-text);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
   font-weight: 750;
   letter-spacing: -0.03em;
 }
@@ -50,7 +53,7 @@
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--telemed-border);
-  border-radius: 20px;
+  border-radius: 18px;
   background: var(--telemed-surface);
   box-shadow:
     0 12px 30px rgb(28 49 87 / 5%),
@@ -72,9 +75,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
   flex: 0 0 auto;
-  padding: 1.35rem 2rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid #e5eaf1;
   background:
     linear-gradient(
@@ -84,9 +87,9 @@
     );
 
   h2 {
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.25rem;
     color: var(--telemed-text);
-    font-size: 1.35rem;
+    font-size: 1.18rem;
     font-weight: 750;
   }
 
@@ -94,8 +97,8 @@
     max-width: 650px;
     margin: 0;
     color: #8490a4;
-    font-size: 0.9rem;
-    line-height: 1.55;
+    font-size: 0.82rem;
+    line-height: 1.45;
   }
 }
 
@@ -106,13 +109,13 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-width: 92px;
-  padding: 0.55rem 1.15rem;
+  min-width: 88px;
+  padding: 0.45rem 1rem;
   border: 1px solid #d4e4ff;
   border-radius: 999px;
   background: #eaf2ff;
   color: #2467e8;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 750;
   letter-spacing: 0.01em;
 }
@@ -139,7 +142,7 @@
     );
 }
 
-/* EMPTY / LOADING / COMPLETED STATES */
+/* EMPTY / COMPLETED STATES */
 
 .conversation-state {
   display: flex;
@@ -149,13 +152,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.75rem;
   text-align: center;
 
   h2 {
-    margin: 1.2rem 0 0.55rem;
+    margin: 1rem 0 0.45rem;
     color: var(--telemed-text);
-    font-size: 1.55rem;
+    font-size: 1.4rem;
     font-weight: 750;
     letter-spacing: -0.015em;
   }
@@ -164,12 +167,12 @@
     max-width: 500px;
     margin: 0;
     color: #8290a5;
-    font-size: 0.92rem;
-    line-height: 1.65;
+    font-size: 0.88rem;
+    line-height: 1.55;
   }
 
   p + p {
-    margin-top: 0.65rem;
+    margin-top: 0.55rem;
   }
 }
 
@@ -186,21 +189,21 @@
 
 .agent-icon {
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 11px;
   background: var(--telemed-primary-soft);
   color: #5f88c7;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 800;
 }
 
 .agent-icon--large {
-  width: 66px;
-  height: 66px;
-  border-radius: 19px;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
   background:
     linear-gradient(
       145deg,
@@ -208,55 +211,8 @@
       #e3efff 100%
     );
   color: var(--telemed-primary);
-  font-size: 1.55rem;
+  font-size: 1.4rem;
   box-shadow: 0 10px 24px rgb(44 107 237 / 10%);
-}
-
-/* LOADING */
-
-.loading-state {
-  background:
-    radial-gradient(
-      circle at center,
-      rgb(237 244 255 / 65%) 0%,
-      rgb(255 255 255 / 0%) 46%
-    );
-}
-
-.loading-dots {
-  display: flex;
-  gap: 0.42rem;
-  margin-top: 1.35rem;
-
-  span {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--telemed-primary);
-    animation: loading-bounce 1.2s infinite ease-in-out;
-  }
-
-  span:nth-child(2) {
-    animation-delay: 120ms;
-  }
-
-  span:nth-child(3) {
-    animation-delay: 240ms;
-  }
-}
-
-@keyframes loading-bounce {
-  0%,
-  60%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(0);
-  }
-
-  30% {
-    opacity: 1;
-    transform: translateY(-5px);
-  }
 }
 
 /* CONVERSATION */
@@ -284,19 +240,20 @@
 }
 
 /*
- * Only this area scrolls.
- * The entire page remains fixed.
+ * Only the messages area scrolls.
+ * The page, header and composer remain fixed.
  */
 .messages {
   display: flex;
   min-height: 0;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 1.15rem;
-  padding: 1.5rem 2rem;
+  gap: 0.9rem;
+  padding: 1.25rem 1.5rem;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scroll-behavior: smooth;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: #c5d4e8 transparent;
@@ -324,7 +281,7 @@
 .message {
   width: fit-content;
   max-width: min(72%, 620px);
-  padding: 0.95rem 1.05rem;
+  padding: 0.8rem 0.95rem;
   border: 1px solid #dce9fb;
   border-radius: 5px 16px 16px;
   background:
@@ -339,9 +296,9 @@
   animation: message-enter 180ms ease-out;
 
   p {
-    margin: 0.35rem 0 0;
-    font-size: 0.91rem;
-    line-height: 1.58;
+    margin: 0.3rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
   }
 }
 
@@ -378,24 +335,70 @@
 .message__agent {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
 }
 
 .message__sender {
   color: var(--telemed-primary);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 750;
+}
+
+/* TYPING INDICATOR */
+
+.message--typing {
+  min-width: 108px;
+  padding-bottom: 0.75rem;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 22px;
+  margin-top: 0.5rem;
+  padding-left: 0.1rem;
+
+  span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--telemed-primary);
+    animation: typing-bounce 1.2s infinite ease-in-out;
+  }
+
+  span:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  span:nth-child(3) {
+    animation-delay: 240ms;
+  }
+}
+
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
 }
 
 /* COMPOSER */
 
 .consultation-composer {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 52px;
+  grid-template-columns: minmax(0, 1fr) 48px;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.7rem;
   flex: 0 0 auto;
-  padding: 0.9rem 1.5rem;
+  padding: 0.75rem 1.25rem;
   border-top: 1px solid #e5eaf1;
   background: #fff;
 }
@@ -403,10 +406,10 @@
 .consultation-composer__field {
   display: flex;
   align-items: center;
-  min-height: 52px;
+  min-height: 48px;
   padding: 0 0.35rem 0 1rem;
   border: 1px solid var(--telemed-border);
-  border-radius: 14px;
+  border-radius: 13px;
   background: #f8fafc;
   transition:
     border-color 150ms ease,
@@ -421,17 +424,22 @@
 
   input {
     width: 100%;
-    min-height: 48px;
+    min-height: 44px;
     border: 0;
     outline: 0;
     background: transparent;
     color: var(--telemed-text);
     font: inherit;
-    font-size: 0.91rem;
+    font-size: 0.88rem;
   }
 
   input::placeholder {
     color: #9aa6b8;
+  }
+
+  input:disabled {
+    cursor: default;
+    opacity: 0.72;
   }
 }
 
@@ -439,12 +447,12 @@
 
 .send-button {
   display: grid;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   place-items: center;
   padding: 0;
   border: 0;
-  border-radius: 14px;
+  border-radius: 13px;
   background:
     linear-gradient(
       135deg,
@@ -452,7 +460,7 @@
       #245fda 100%
     );
   color: #fff;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   cursor: pointer;
   box-shadow: 0 8px 18px rgb(44 107 237 / 18%);
   transition:
@@ -553,12 +561,12 @@
 
 .safety-notice {
   display: flex;
-  gap: 0.8rem;
+  gap: 0.7rem;
   flex: 0 0 auto;
-  margin-top: 0.75rem;
-  padding: 0.75rem 1rem;
+  margin-top: 0.6rem;
+  padding: 0.65rem 0.9rem;
   border: 1px solid #dce7f7;
-  border-radius: 12px;
+  border-radius: 11px;
   background:
     linear-gradient(
       135deg,
@@ -568,55 +576,51 @@
 
   strong {
     color: #1c3157;
-    font-size: 0.8rem;
+    font-size: 0.76rem;
   }
 
   p {
-    margin: 0.2rem 0 0;
+    margin: 0.15rem 0 0;
     color: #728096;
-    font-size: 0.78rem;
-    line-height: 1.45;
+    font-size: 0.73rem;
+    line-height: 1.4;
   }
 }
 
 .safety-notice__icon {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   place-items: center;
   flex-shrink: 0;
   border-radius: 50%;
   background: #eaf2ff;
   color: var(--telemed-primary);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 
 /* RESPONSIVE */
 
 @media (max-width: 700px) {
-  .preconsultation {
-    height: calc(100dvh - 68px - 2.5rem);
-  }
-
   .page-title {
-    margin-bottom: 0.8rem;
-    font-size: 1.65rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.45rem;
   }
 
   .preconsultation__header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 0.65rem;
-    padding: 1rem 1.25rem;
+    gap: 0.55rem;
+    padding: 0.85rem 1rem;
   }
 
   .conversation-state {
-    padding: 1.5rem 1.25rem;
+    padding: 1.25rem 1rem;
   }
 
   .messages {
-    padding: 1.25rem;
+    padding: 1rem;
   }
 
   .message {
@@ -624,27 +628,35 @@
   }
 
   .consultation-composer {
-    grid-template-columns: minmax(0, 1fr) 48px;
-    padding: 0.75rem;
+    grid-template-columns: minmax(0, 1fr) 46px;
+    padding: 0.65rem;
+  }
+
+  .consultation-composer__field {
+    min-height: 46px;
+
+    input {
+      min-height: 42px;
+    }
   }
 
   .send-button {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
   }
 
   .safety-notice {
-    margin-top: 0.6rem;
+    margin-top: 0.5rem;
   }
 }
 
 /* ACCESSIBILITY */
 
 @media (prefers-reduced-motion: reduce) {
-  .loading-dots span,
   .conversation,
   .message,
+  .typing-indicator span,
   .completed-state,
   .completed-state .agent-icon--large {
     animation: none;
@@ -654,5 +666,9 @@
   .consultation-composer__field,
   .send-button {
     transition: none;
+  }
+
+  .messages {
+    scroll-behavior: auto;
   }
 }
