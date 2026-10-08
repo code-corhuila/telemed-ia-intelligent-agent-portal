@@ -1,44 +1,131 @@
-@if (viewState() === 'loading') {
-  <section
-    class="preconsultation-loading"
-    data-testid="preconsultation-loading"
-  >
-    <p>Preparando tu preconsulta...</p>
-  </section>
-} @else if (viewState() === 'chat') {
-  <section
-    class="preconsultation-chat"
-    data-testid="preconsultation-chat"
-  >
-    @for (message of messages(); track message.id) {
-      <article>
-        <strong>
-          {{ message.sender === 'AGENT' ? 'TeleMed IA' : 'Paciente' }}
-        </strong>
+<section class="preconsultation">
+  <header class="preconsultation__header">
+    <div>
+      <span class="preconsultation__eyebrow">Asistente inteligente</span>
 
-        <p>{{ message.content }}</p>
-      </article>
-    }
-  </section>
-} @else {
-  <section
-    class="preconsultation-empty"
-    data-testid="preconsultation-empty"
-  >
-    <p>Asistente IA</p>
+      <h1>Preconsulta con TeleMed IA</h1>
 
-    <h1>Inicia tu preconsulta</h1>
+      <p>
+        Comparte información relevante antes de tu atención con el profesional.
+      </p>
+    </div>
 
-    <p>
-      Realiza tu preconsulta antes de hablar con el profesional.
-    </p>
-
-    <button
-      type="button"
-      data-testid="start-preconsultation"
-      (click)="startPreconsultation()"
+    <span
+      class="status"
+      data-testid="preconsultation-status"
     >
-      Iniciar preconsulta
-    </button>
-  </section>
-}
+      @if (viewState() === 'empty') {
+        Disponible
+      } @else if (viewState() === 'loading') {
+        Preparando
+      } @else {
+        En curso
+      }
+    </span>
+  </header>
+
+  <div class="preconsultation__content">
+    @if (viewState() === 'loading') {
+      <section
+        class="state-card loading-state"
+        data-testid="preconsultation-loading"
+      >
+        <div class="agent-icon agent-icon--large">
+          ✦
+        </div>
+
+        <h2>Preparando tu preconsulta...</h2>
+
+        <p>
+          Estamos preparando el espacio para comenzar la conversación.
+        </p>
+
+        <div class="loading-dots" aria-label="Cargando">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+    } @else if (viewState() === 'chat') {
+      <section
+        class="conversation"
+        data-testid="preconsultation-chat"
+      >
+        <div class="conversation__heading">
+          <div class="agent-icon">
+            ✦
+          </div>
+
+          <div>
+            <strong>TeleMed IA</strong>
+            <span>Asistente de preconsulta</span>
+          </div>
+        </div>
+
+        <div class="messages">
+          @for (message of messages(); track message.id) {
+            <article
+              class="message"
+              [class.message--patient]="message.sender === 'PATIENT'"
+            >
+              <span class="message__sender">
+                {{ message.sender === 'AGENT' ? 'TeleMed IA' : 'Tú' }}
+              </span>
+
+              <p>{{ message.content }}</p>
+            </article>
+          }
+        </div>
+      </section>
+    } @else {
+      <section
+        class="state-card empty-state"
+        data-testid="preconsultation-empty"
+      >
+        <div class="agent-icon agent-icon--large">
+          ✦
+        </div>
+
+        <span class="empty-state__label">
+          Tu asistente de preconsulta
+        </span>
+
+        <h2>Inicia tu preconsulta</h2>
+
+        <p>
+          Cuéntale a TeleMed IA el motivo de tu consulta antes de hablar
+          con el profesional.
+        </p>
+
+        <button
+          class="primary-button"
+          type="button"
+          data-testid="start-preconsultation"
+          (click)="startPreconsultation()"
+        >
+          Iniciar preconsulta
+          <span aria-hidden="true">→</span>
+        </button>
+      </section>
+    }
+
+    <aside
+      class="safety-notice"
+      data-testid="clinical-safety-notice"
+    >
+      <div class="safety-notice__icon" aria-hidden="true">
+        i
+      </div>
+
+      <div>
+        <strong>Información importante</strong>
+
+        <p>
+          TeleMed IA no diagnostica ni prescribe medicamentos.
+          La información recopilada será utilizada como contexto previo
+          para el profesional de salud.
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>
