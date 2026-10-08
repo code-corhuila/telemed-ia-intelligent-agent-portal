@@ -1,89 +1,188 @@
 :host {
+  --telemed-blue: #173b78;
+  --telemed-blue-dark: #102f65;
+  --telemed-primary: #2c6bed;
+  --telemed-primary-dark: #2159c7;
+  --telemed-primary-soft: #edf4ff;
+
+  --telemed-text: #172b4d;
+  --telemed-muted: #7c8799;
+  --telemed-border: #dfe5ed;
+  --telemed-surface: #ffffff;
+  --telemed-background: #f5f7fb;
+
+  --telemed-success: #238636;
+  --telemed-success-soft: #eaf7ef;
+  --telemed-success-border: #cce9d5;
+
   display: block;
+  height: 100%;
+  min-height: 0;
 }
 
 .preconsultation {
+  display: flex;
   width: 100%;
-  color: #172b4d;
+  height: calc(100dvh - 68px - 4rem);
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--telemed-text);
 }
 
+/* PAGE TITLE */
+
 .page-title {
-  margin: 0 0 1.5rem;
-  color: #172b4d;
+  flex: 0 0 auto;
+  margin: 0 0 1.25rem;
+  color: var(--telemed-text);
   font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 750;
   letter-spacing: -0.03em;
 }
 
+/* MAIN CARD */
+
 .preconsultation-card {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
   overflow: hidden;
-  border: 1px solid #dfe5ed;
+  border: 1px solid var(--telemed-border);
   border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 10px 30px rgb(28 49 87 / 5%);
+  background: var(--telemed-surface);
+  box-shadow:
+    0 12px 30px rgb(28 49 87 / 5%),
+    0 2px 8px rgb(28 49 87 / 3%);
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
+
+.preconsultation-card:hover {
+  box-shadow:
+    0 16px 38px rgb(28 49 87 / 7%),
+    0 3px 10px rgb(28 49 87 / 4%);
+}
+
+/* HEADER */
 
 .preconsultation__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  padding: 1.7rem 2rem;
+  flex: 0 0 auto;
+  padding: 1.35rem 2rem;
   border-bottom: 1px solid #e5eaf1;
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fbff 100%
+    );
 
   h2 {
     margin: 0 0 0.35rem;
-    color: #172b4d;
+    color: var(--telemed-text);
     font-size: 1.35rem;
     font-weight: 750;
   }
 
   p {
+    max-width: 650px;
     margin: 0;
     color: #8490a4;
     font-size: 0.9rem;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 }
 
+/* STATUS */
+
 .status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  min-width: 92px;
   padding: 0.55rem 1.15rem;
+  border: 1px solid #d4e4ff;
   border-radius: 999px;
-  background: #e4efff;
+  background: #eaf2ff;
   color: #2467e8;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 750;
+  letter-spacing: 0.01em;
 }
 
-.preconsultation-card__body {
-  min-height: 430px;
+.preconsultation-card:has(.completed-state) .status {
+  border-color: var(--telemed-success-border);
+  background: var(--telemed-success-soft);
+  color: var(--telemed-success);
 }
+
+/* CARD BODY */
+
+.preconsultation-card__body {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fbfcfe 100%
+    );
+}
+
+/* EMPTY / LOADING / COMPLETED STATES */
 
 .conversation-state {
   display: flex;
-  min-height: 430px;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 2rem;
+  padding: 2rem;
   text-align: center;
 
   h2 {
     margin: 1.2rem 0 0.55rem;
-    color: #172b4d;
+    color: var(--telemed-text);
     font-size: 1.55rem;
     font-weight: 750;
+    letter-spacing: -0.015em;
   }
 
   p {
-    max-width: 480px;
+    max-width: 500px;
     margin: 0;
     color: #8290a5;
     font-size: 0.92rem;
-    line-height: 1.6;
+    line-height: 1.65;
+  }
+
+  p + p {
+    margin-top: 0.65rem;
   }
 }
+
+.empty-state {
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgb(237 244 255 / 70%) 0%,
+      rgb(255 255 255 / 0%) 42%
+    );
+}
+
+/* AGENT ICON */
 
 .agent-icon {
   display: grid;
@@ -92,63 +191,184 @@
   place-items: center;
   flex-shrink: 0;
   border-radius: 12px;
-  background: #edf4ff;
-  color: #8aa7cf;
+  background: var(--telemed-primary-soft);
+  color: #5f88c7;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .agent-icon--large {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 66px;
+  height: 66px;
+  border-radius: 19px;
+  background:
+    linear-gradient(
+      145deg,
+      #edf4ff 0%,
+      #e3efff 100%
+    );
+  color: var(--telemed-primary);
   font-size: 1.55rem;
+  box-shadow: 0 10px 24px rgb(44 107 237 / 10%);
+}
+
+/* LOADING */
+
+.loading-state {
+  background:
+    radial-gradient(
+      circle at center,
+      rgb(237 244 255 / 65%) 0%,
+      rgb(255 255 255 / 0%) 46%
+    );
 }
 
 .loading-dots {
   display: flex;
-  gap: 0.4rem;
-  margin-top: 1.3rem;
+  gap: 0.42rem;
+  margin-top: 1.35rem;
 
   span {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: #2c6bed;
+    background: var(--telemed-primary);
+    animation: loading-bounce 1.2s infinite ease-in-out;
+  }
+
+  span:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  span:nth-child(3) {
+    animation-delay: 240ms;
   }
 }
 
-.conversation,
-.messages {
-  min-height: 430px;
+@keyframes loading-bounce {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-5px);
+  }
 }
 
+/* CONVERSATION */
+
+.conversation {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  animation: conversation-enter 180ms ease-out;
+}
+
+@keyframes conversation-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * Only this area scrolls.
+ * The entire page remains fixed.
+ */
 .messages {
   display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.15rem;
   padding: 1.5rem 2rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #c5d4e8 transparent;
 }
+
+.messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #c5d4e8;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+  background: #aebfd5;
+}
+
+/* MESSAGES */
 
 .message {
   width: fit-content;
   max-width: min(72%, 620px);
-  padding: 0.9rem 1rem;
+  padding: 0.95rem 1.05rem;
+  border: 1px solid #dce9fb;
   border-radius: 5px 16px 16px;
-  background: #eef5ff;
-  color: #172b4d;
+  background:
+    linear-gradient(
+      135deg,
+      #f1f6ff 0%,
+      #edf4ff 100%
+    );
+  color: var(--telemed-text);
+  overflow-wrap: anywhere;
+  box-shadow: 0 4px 12px rgb(28 49 87 / 4%);
+  animation: message-enter 180ms ease-out;
 
   p {
     margin: 0.35rem 0 0;
-    line-height: 1.55;
+    font-size: 0.91rem;
+    line-height: 1.58;
+  }
+}
+
+@keyframes message-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .message--patient {
   align-self: flex-end;
+  border-color: transparent;
   border-radius: 16px 5px 16px 16px;
-  background: #2c6bed;
+  background:
+    linear-gradient(
+      135deg,
+      var(--telemed-primary) 0%,
+      #245fda 100%
+    );
   color: #fff;
+  box-shadow: 0 7px 18px rgb(44 107 237 / 15%);
 
   .message__sender {
     color: #fff;
@@ -162,17 +382,20 @@
 }
 
 .message__sender {
-  color: #2c6bed;
+  color: var(--telemed-primary);
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 750;
 }
+
+/* COMPOSER */
 
 .consultation-composer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 52px;
   align-items: center;
   gap: 0.8rem;
-  padding: 1rem 1.5rem;
+  flex: 0 0 auto;
+  padding: 0.9rem 1.5rem;
   border-top: 1px solid #e5eaf1;
   background: #fff;
 }
@@ -180,20 +403,31 @@
 .consultation-composer__field {
   display: flex;
   align-items: center;
-  min-height: 50px;
+  min-height: 52px;
   padding: 0 0.35rem 0 1rem;
-  border: 1px solid #dfe5ed;
+  border: 1px solid var(--telemed-border);
   border-radius: 14px;
   background: #f8fafc;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background 150ms ease;
+
+  &:focus-within {
+    border-color: #8bb1f8;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgb(44 107 237 / 9%);
+  }
 
   input {
     width: 100%;
+    min-height: 48px;
     border: 0;
     outline: 0;
     background: transparent;
-    color: #172b4d;
+    color: var(--telemed-text);
     font: inherit;
-    font-size: 0.9rem;
+    font-size: 0.91rem;
   }
 
   input::placeholder {
@@ -201,6 +435,7 @@
   }
 }
 
+/* SEND BUTTON */
 
 .send-button {
   display: grid;
@@ -210,27 +445,126 @@
   padding: 0;
   border: 0;
   border-radius: 14px;
-  background: #2c6bed;
+  background:
+    linear-gradient(
+      135deg,
+      var(--telemed-primary) 0%,
+      #245fda 100%
+    );
   color: #fff;
   font-size: 1.15rem;
   cursor: pointer;
   box-shadow: 0 8px 18px rgb(44 107 237 / 18%);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+.send-button:not(:disabled):hover {
+  background:
+    linear-gradient(
+      135deg,
+      #3675f0 0%,
+      var(--telemed-primary-dark) 100%
+    );
+  box-shadow: 0 10px 22px rgb(44 107 237 / 25%);
+  transform: translateY(-1px);
+}
+
+.send-button:not(:disabled):active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.send-button:focus-visible {
+  outline: 3px solid rgb(44 107 237 / 22%);
+  outline-offset: 2px;
 }
 
 .send-button:disabled {
   background: #cdd7e6;
   box-shadow: none;
   cursor: not-allowed;
+  transform: none;
 }
+
+/* COMPLETED STATE */
+
+.completed-state {
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      rgb(234 247 239 / 85%) 0%,
+      rgb(255 255 255 / 0%) 44%
+    );
+  animation: completed-enter 260ms ease-out;
+
+  .agent-icon--large {
+    border: 1px solid var(--telemed-success-border);
+    background:
+      linear-gradient(
+        145deg,
+        #effaf3 0%,
+        var(--telemed-success-soft) 100%
+      );
+    color: var(--telemed-success);
+    box-shadow: 0 10px 24px rgb(35 134 54 / 10%);
+    animation: completed-icon 420ms ease-out;
+  }
+
+  h2 {
+    color: #183c25;
+  }
+
+  p {
+    color: #667b6e;
+  }
+}
+
+@keyframes completed-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes completed-icon {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  70% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* CLINICAL SAFETY NOTICE */
 
 .safety-notice {
   display: flex;
   gap: 0.8rem;
-  margin-top: 1rem;
-  padding: 0.85rem 1rem;
+  flex: 0 0 auto;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
   border: 1px solid #dce7f7;
-  border-radius: 10px;
-  background: #f7faff;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      135deg,
+      #f8fbff 0%,
+      #f4f8fe 100%
+    );
 
   strong {
     color: #1c3157;
@@ -241,40 +575,48 @@
     margin: 0.2rem 0 0;
     color: #728096;
     font-size: 0.78rem;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 }
 
 .safety-notice__icon {
   display: grid;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   place-items: center;
   flex-shrink: 0;
   border-radius: 50%;
   background: #eaf2ff;
-  color: #2c6bed;
+  color: var(--telemed-primary);
   font-size: 0.76rem;
   font-weight: 800;
 }
 
+/* RESPONSIVE */
+
 @media (max-width: 700px) {
+  .preconsultation {
+    height: calc(100dvh - 68px - 2.5rem);
+  }
+
   .page-title {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.65rem;
   }
 
   .preconsultation__header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 0.8rem;
-    padding: 1.25rem;
+    gap: 0.65rem;
+    padding: 1rem 1.25rem;
   }
 
-  .preconsultation-card__body,
-  .conversation,
-  .messages,
   .conversation-state {
-    min-height: 360px;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .messages {
+    padding: 1.25rem;
   }
 
   .message {
@@ -283,58 +625,34 @@
 
   .consultation-composer {
     grid-template-columns: minmax(0, 1fr) 48px;
-    padding: 0.85rem;
+    padding: 0.75rem;
   }
 
   .send-button {
     width: 48px;
     height: 48px;
-  }
-}
-
-.preconsultation-summary {
-  padding: 2rem;
-
-  h2 {
-    margin: 0.35rem 0 1.5rem;
-    color: #172b4d;
-    font-size: 1.5rem;
-  }
-}
-
-.summary__eyebrow {
-  color: #2c6bed;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-
-  article {
-    padding: 1rem;
-    border: 1px solid #e1e7ef;
     border-radius: 12px;
-    background: #f8fafc;
   }
 
-  span {
-    color: #75839a;
-    font-size: 0.78rem;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0.4rem 0 0;
-    color: #172b4d;
-    line-height: 1.5;
+  .safety-notice {
+    margin-top: 0.6rem;
   }
 }
 
-@media (max-width: 700px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-dots span,
+  .conversation,
+  .message,
+  .completed-state,
+  .completed-state .agent-icon--large {
+    animation: none;
+  }
+
+  .preconsultation-card,
+  .consultation-composer__field,
+  .send-button {
+    transition: none;
   }
 }
