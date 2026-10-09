@@ -36,6 +36,9 @@ export class PreconsultationPageComponent {
   readonly messages = signal<readonly AgentMessage[]>([]);
   readonly consultationReason = signal('');
 
+  private readonly sessionId = signal<string | null>(null);
+  private readonly patientTurn = signal(0);
+
   updateConsultationReason(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.consultationReason.set(input.value);
@@ -56,14 +59,74 @@ export class PreconsultationPageComponent {
     };
 
     this.consultationReason.set('');
+
+    const currentSessionId = this.sessionId();
+
+    if (!currentSessionId) {
+      await this.startConversation(
+        reason,
+        patientMessage,
+      );
+
+      return;
+    }
+
+    await this.continueConversation(
+      currentSessionId,
+      reason,
+      patientMessage,
+    );
+  }
+
+  private async startConversation(
+    reason: string,
+    patientMessage: AgentMessage,
+  ): Promise<void> {
     this.viewState.set('loading');
 
-    const session = await this.agentDataSource.startSession();
+    const session =
+      await this.agentDataSource.startSession(reason);
+
+    this.sessionId.set(session.id);
 
     this.messages.set([
       patientMessage,
       ...session.messages,
     ]);
+
+    this.patientTurn.set(1);
+    this.viewState.set('chat');
+  }
+
+  private async continueConversation(
+    sessionId: string,
+    reason: string,
+    patientMessage: AgentMessage,
+  ): Promise<void> {
+    const turn = this.patientTurn();
+
+    this.messages.update((messages) => [
+      ...messages,
+      patientMessage,
+    ]);
+
+    this.viewState.set('loading');
+
+    const agentMessage =
+      await this.agentDataSource.sendMessage(
+        sessionId,
+        reason,
+        turn,
+      );
+
+    this.messages.update((messages) => [
+      ...messages,
+      agentMessage,
+    ]);
+
+    this.patientTurn.update(
+      (currentTurn) => currentTurn + 1,
+    );
 
     this.viewState.set('chat');
   }
