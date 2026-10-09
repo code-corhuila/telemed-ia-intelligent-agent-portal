@@ -1,0 +1,202 @@
+<section class="preconsultation">
+  <h1 class="page-title">Asistente IA</h1>
+
+  <section
+    class="preconsultation-card"
+    data-testid="preconsultation-card"
+  >
+    <header class="preconsultation__header">
+      <div>
+        <h2>Nueva preconsulta</h2>
+
+        <p>
+          Describe tus síntomas o el motivo de tu consulta para que la IA
+          organice tu información.
+        </p>
+      </div>
+
+      <span
+        class="status"
+        data-testid="preconsultation-status"
+      >
+        @if (viewState() === 'completed') {
+          Completada
+        } @else {
+          En curso
+        }
+      </span>
+    </header>
+
+    <div class="preconsultation-card__body">
+      @if (viewState() === 'completed') {
+        <section
+          class="conversation-state completed-state"
+          data-testid="preconsultation-completed"
+        >
+          <div
+            class="agent-icon agent-icon--large"
+            aria-hidden="true"
+          >
+            ✓
+          </div>
+
+          <h2>Preconsulta finalizada</h2>
+
+          <p>
+            Hemos recopilado la información necesaria para tu consulta.
+          </p>
+
+          <p>
+            Esta información estará disponible para el profesional de salud
+            el día de tu cita.
+          </p>
+        </section>
+      } @else if (viewState() === 'chat') {
+        <section
+          class="conversation"
+          data-testid="preconsultation-chat"
+        >
+          <div
+            #messagesContainer
+            class="messages"
+          >
+            @for (message of messages(); track message.id) {
+              <article
+                class="message"
+                [class.message--patient]="message.sender === 'PATIENT'"
+              >
+                @if (message.sender === 'AGENT') {
+                  <div class="message__agent">
+                    <div
+                      class="agent-icon"
+                      aria-hidden="true"
+                    >
+                      ✦
+                    </div>
+
+                    <span class="message__sender">
+                      TeleMed IA
+                    </span>
+                  </div>
+                } @else {
+                  <span class="message__sender">
+                    Tú
+                  </span>
+                }
+
+                <p>
+                  {{ message.content }}
+                </p>
+              </article>
+            }
+
+            @if (isResponding()) {
+              <article
+                class="message message--typing"
+                data-testid="agent-typing"
+              >
+                <div class="message__agent">
+                  <div
+                    class="agent-icon"
+                    aria-hidden="true"
+                  >
+                    ✦
+                  </div>
+
+                  <span class="message__sender">
+                    TeleMed IA
+                  </span>
+                </div>
+
+                <div
+                  class="typing-indicator"
+                  aria-label="TeleMed IA está escribiendo"
+                >
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      } @else {
+        <section
+          class="conversation-state empty-state"
+          data-testid="preconsultation-empty"
+        >
+          <div
+            class="agent-icon agent-icon--large"
+            aria-hidden="true"
+          >
+            ✦
+          </div>
+
+          <h2>Inicia tu conversación con la IA</h2>
+
+          <p>
+            Escribe tu mensaje en la parte inferior para comenzar tu
+            preconsulta.
+          </p>
+        </section>
+      }
+    </div>
+
+    @if (viewState() !== 'completed') {
+      <form
+        class="consultation-composer"
+        data-testid="consultation-composer"
+        (submit)="$event.preventDefault(); submitConsultationReason()"
+      >
+        <div class="consultation-composer__field">
+          <input
+            #messageInput
+            type="text"
+            data-testid="consultation-reason-input"
+            placeholder="Escribe aquí tu consulta..."
+            aria-label="Motivo de consulta"
+            autocomplete="off"
+            [value]="consultationReason()"
+            [disabled]="isResponding()"
+            (input)="updateConsultationReason($event)"
+          />
+        </div>
+
+        <button
+          class="send-button"
+          type="submit"
+          data-testid="send-consultation-reason"
+          aria-label="Enviar mensaje"
+          [disabled]="
+            consultationReason().trim().length === 0 ||
+            isResponding()
+          "
+        >
+          <span aria-hidden="true">➤</span>
+        </button>
+      </form>
+    }
+  </section>
+
+  <aside
+    class="safety-notice"
+    data-testid="clinical-safety-notice"
+  >
+    <div
+      class="safety-notice__icon"
+      aria-hidden="true"
+    >
+      i
+    </div>
+
+    <div>
+      <strong>Información importante</strong>
+
+      <p>
+        TeleMed IA no diagnostica ni prescribe medicamentos.
+        La información recopilada será utilizada como contexto previo
+        para el profesional de salud.
+      </p>
+    </div>
+  </aside>
+</section>
