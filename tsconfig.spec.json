@@ -4,10 +4,20 @@
     "outDir": "./out-tsc/spec",
     "types": [
       "vitest/globals"
-    ]
+    ],
+    // Specs run without the shell: its federated modules resolve to
+    // in-repo doubles with the same public API.
+    "paths": {
+      "shell/apiClient": ["./src/testing/shell/api-client.ts"],
+      "shell/session": ["./src/testing/shell/session.ts"],
+      "shell/apiError": ["./src/testing/shell/api-error.ts"]
+    }
   },
   "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/shell-modules.d.ts",
+    "src/bootstrap.ts"
   ]
 }

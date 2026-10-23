@@ -39,7 +39,12 @@
                 "input": "public"
               }
             ],
-            "styles": []
+            "styles": [],
+            "externalDependencies": [
+              "shell/apiClient",
+              "shell/session",
+              "shell/apiError"
+            ]
           },
           "configurations": {
             "production": {
@@ -49,6 +54,13 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "test": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "tsConfig": "tsconfig.spec.json",
+              "externalDependencies": []
             }
           },
           "defaultConfiguration": "production"
@@ -78,7 +90,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "buildTarget": "agent:esbuild:development"
+            "buildTarget": "agent:esbuild:test"
           }
         }
       }
