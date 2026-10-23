@@ -1,516 +1,168 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { Observable, Subject, of, throwError } from 'rxjs';
+
 import { PreconsultationPageComponent } from './preconsultation-page.component';
+import { AgentApiService } from '../data/agent-api.service';
+import { AgentReply, Conversation } from '../model/conversation';
 
 describe('PreconsultationPageComponent', () => {
-  let fixture: ComponentFixture<PreconsultationPageComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [PreconsultationPageComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(
-      PreconsultationPageComponent,
-    );
-
-    fixture.detectChanges();
-  });
-
-  it('shows the initial empty preconsultation state', () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    expect(
-      element.querySelector(
-        '[data-testid="preconsultation-empty"]',
-      ),
-    ).toBeTruthy();
-
-    expect(element.textContent).toContain(
-      'Inicia tu conversación con la IA',
-    );
-
-    expect(
-      element.querySelector(
-        '[data-testid="start-preconsultation"]',
-      ),
-    ).toBeFalsy();
-
-    expect(
-      element.querySelector(
-        '[data-testid="consultation-reason-input"]',
-      ),
-    ).toBeTruthy();
-  });
-
-it('keeps the conversation visible while the agent is responding', () => {
-  const element: HTMLElement = fixture.nativeElement;
-
-  const input = element.querySelector<HTMLInputElement>(
-    '[data-testid="consultation-reason-input"]',
-  );
-
-  const sendButton = element.querySelector<HTMLButtonElement>(
-    '[data-testid="send-consultation-reason"]',
-  );
-
-  input!.value = 'Tengo dolor de cabeza desde ayer';
-  input!.dispatchEvent(new Event('input'));
-
-  fixture.detectChanges();
-
-  sendButton!.click();
-  fixture.detectChanges();
-
-  expect(
-    element.querySelector(
-      '[data-testid="preconsultation-loading"]',
-    ),
-  ).toBeFalsy();
-
-  expect(
-    element.querySelector(
-      '[data-testid="preconsultation-chat"]',
-    ),
-  ).toBeTruthy();
-
-  expect(
-    element.querySelector(
-      '[data-testid="consultation-composer"]',
-    ),
-  ).toBeTruthy();
-
-  expect(
-    element.querySelector(
-      '[data-testid="agent-typing"]',
-    ),
-  ).toBeTruthy();
-
-  expect(element.textContent).toContain(
-    'Tengo dolor de cabeza desde ayer',
-  );
-});
-
-  it('asks about duration after receiving the consultation reason', async () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    const input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-    const sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
-
-    input!.value = 'Tengo dolor de cabeza desde ayer';
-    input!.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    sendButton!.click();
-    fixture.detectChanges();
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    fixture.detectChanges();
-
-    expect(
-      element.querySelector(
-        '[data-testid="preconsultation-chat"]',
-      ),
-    ).toBeTruthy();
-
-    expect(element.textContent).toContain(
-      'Tengo dolor de cabeza desde ayer',
-    );
-
-    expect(element.textContent).toContain(
-      '¿Desde hace cuánto tiempo presentas esta molestia?',
-    );
-  });
-
-  it('keeps the conversation and asks about symptoms after duration', async () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    let input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-    let sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
-
-    input!.value = 'Tengo dolor de cabeza desde ayer';
-    input!.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    sendButton!.click();
-    fixture.detectChanges();
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    fixture.detectChanges();
-
-    input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-    sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
-
-    input!.value = 'Desde ayer en la tarde';
-    input!.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    sendButton!.click();
-    fixture.detectChanges();
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    fixture.detectChanges();
-
-    expect(element.textContent).toContain(
-      'Tengo dolor de cabeza desde ayer',
-    );
-
-    expect(element.textContent).toContain(
-      'Desde ayer en la tarde',
-    );
-
-    expect(element.textContent).toContain(
-      '¿Presentas otros síntomas además de la molestia principal?',
-    );
-  });
-
-  it('shows the Intelligent Agent preconsultation experience', () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    expect(element.textContent).toContain(
-      'Nueva preconsulta',
-    );
-
-    expect(
-      element.querySelector(
-        '[data-testid="preconsultation-status"]',
-      ),
-    ).toBeTruthy();
-
-    expect(
-      element.querySelector(
-        '[data-testid="clinical-safety-notice"]',
-      ),
-    ).toBeTruthy();
-
-    expect(element.textContent).toContain(
-      'TeleMed IA no diagnostica ni prescribe medicamentos',
-    );
-  });
-
-  it('shows the patient consultation reason after submitting it', async () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    const input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-    const sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
-
-    input!.value = 'Tengo dolor de cabeza desde ayer';
-    input!.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    expect(sendButton!.disabled).toBe(false);
-
-    sendButton!.click();
-    fixture.detectChanges();
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    fixture.detectChanges();
-
-    expect(element.textContent).toContain(
-      'Tengo dolor de cabeza desde ayer',
-    );
-  });
-
-  it('starts the preconsultation when the patient submits the first message', async () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    expect(
-      element.querySelector(
-        '[data-testid="start-preconsultation"]',
-      ),
-    ).toBeFalsy();
-
-    const input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-    const sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
-
-    input!.value = 'Tengo dolor de cabeza desde ayer';
-    input!.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    sendButton!.click();
-    fixture.detectChanges();
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    fixture.detectChanges();
-
-    expect(
-      element.querySelector(
-        '[data-testid="preconsultation-chat"]',
-      ),
-    ).toBeTruthy();
-
-    expect(element.textContent).toContain(
-      'Tengo dolor de cabeza desde ayer',
-    );
-  });
-
-  it('shows the MVP conversation layout', () => {
-    const element: HTMLElement = fixture.nativeElement;
-
-    expect(element.textContent).toContain(
-      'Nueva preconsulta',
-    );
-
-    const card = element.querySelector<HTMLElement>(
-      '[data-testid="preconsultation-card"]',
-    );
-
-    expect(card).toBeTruthy();
-
-    const composer = card?.querySelector(
-      '[data-testid="consultation-composer"]',
-    );
-
-    expect(composer).toBeTruthy();
-
-    const status = element.querySelector<HTMLElement>(
-      '[data-testid="preconsultation-status"]',
-    );
-
-    expect(status).toBeTruthy();
-    expect(status?.textContent).toContain('En curso');
-  });
-  it('asks about relevant medical history after symptoms', async () => {
-  const element: HTMLElement = fixture.nativeElement;
-
-  const submitMessage = async (message: string): Promise<void> => {
-    const input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-    const sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
-
-    input!.value = message;
-    input!.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    sendButton!.click();
-    fixture.detectChanges();
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    fixture.detectChanges();
+  const appointmentId = 'aaaaaaaa-0000-4000-8000-000000000001';
+  const opening = { id: 'm1', sender: 'AGENT' as const, content: '¿Cuál es el motivo de tu consulta?', sentAt: 'x' };
+  const active: Conversation = {
+    id: 'c1', appointmentId, status: 'ACTIVE', questionsAsked: 0, questionLimit: 8, messages: [opening],
   };
 
-  await submitMessage('Tengo dolor de cabeza desde ayer');
-  await submitMessage('Desde ayer en la tarde');
-  await submitMessage('También tengo un poco de mareo');
+  function reply(content: string, conversationStatus: AgentReply['conversationStatus'] = 'ACTIVE'): AgentReply {
+    return { id: `r-${content}`, sender: 'AGENT', content, sentAt: 'x', conversationStatus };
+  }
 
-  expect(element.textContent).toContain(
-    'También tengo un poco de mareo',
-  );
+  interface AgentDouble {
+    findByAppointment: ReturnType<typeof vi.fn>;
+    start: ReturnType<typeof vi.fn>;
+    send: ReturnType<typeof vi.fn>;
+    finish: ReturnType<typeof vi.fn>;
+  }
 
-  expect(element.textContent).toContain(
-    '¿Tienes antecedentes médicos relevantes que quieras mencionar?',
-  );
-});
+  async function render(existing: Observable<Conversation | null>) {
+    const agent: AgentDouble = {
+      findByAppointment: vi.fn().mockReturnValue(existing),
+      start: vi.fn().mockReturnValue(of(active)),
+      send: vi.fn().mockReturnValue(of(reply('¿Desde cuándo?'))),
+      finish: vi.fn().mockReturnValue(of({ ...active, status: 'FINISHED' })),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: ':appointmentId', component: PreconsultationPageComponent }]),
+        { provide: AgentApiService, useValue: agent },
+      ],
+    });
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl(`/${appointmentId}`, PreconsultationPageComponent);
+    const fixture = harness.fixture;
+    fixture.detectChanges();
+    return { fixture, element: harness.routeNativeElement as HTMLElement, agent };
+  }
 
-it('completes the preconsultation without exposing the clinical summary to the patient', async () => {
-  const element: HTMLElement = fixture.nativeElement;
+  function byTestId(element: HTMLElement, id: string): HTMLElement | null {
+    return element.querySelector(`[data-testid="${id}"]`);
+  }
 
-  const submitMessage = async (
-    message: string,
-  ): Promise<void> => {
-    const input = element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
+  function write(fixture: { detectChanges(): void }, element: HTMLElement, text: string): void {
+    const input = byTestId(element, 'message-input') as HTMLInputElement;
+    input.value = text;
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    (byTestId(element, 'send-message') as HTMLButtonElement).click();
+    fixture.detectChanges();
+  }
 
-    const sendButton = element.querySelector<HTMLButtonElement>(
-      '[data-testid="send-consultation-reason"]',
-    );
+  it('looks for the pre-consultation of the appointment in the route', async () => {
+    const { element, agent } = await render(new Subject());
 
-    expect(input).toBeTruthy();
-    expect(sendButton).toBeTruthy();
+    expect(agent.findByAppointment).toHaveBeenCalledWith(appointmentId);
+    expect(byTestId(element, 'preconsultation-loading')?.getAttribute('role')).toBe('status');
+  });
 
-    input!.value = message;
-    input!.dispatchEvent(new Event('input'));
+  it('starts it only when the patient asks to, and shows the agent opening question', async () => {
+    const { fixture, element, agent } = await render(of(null));
+    expect(byTestId(element, 'message-input')).toBeNull();
 
+    byTestId(element, 'start-preconsultation')!.click();
     fixture.detectChanges();
 
-    sendButton!.click();
+    expect(agent.start).toHaveBeenCalledWith(appointmentId, expect.stringMatching(/^[0-9a-f-]{36}$/));
+    expect(element.textContent).toContain('¿Cuál es el motivo de tu consulta?');
+    expect(byTestId(element, 'message-input')).not.toBeNull();
+  });
+
+  it('retries a failed start with the same key, so it never starts twice', async () => {
+    const { fixture, element, agent } = await render(of(null));
+    agent.start.mockReturnValueOnce(throwError(() => ({ status: 503, code: 'SERVICE_UNAVAILABLE' })));
+
+    byTestId(element, 'start-preconsultation')!.click();
+    fixture.detectChanges();
+    expect(byTestId(element, 'preconsultation-error')?.textContent).toContain('no está disponible');
+    byTestId(element, 'retry')!.click();
     fixture.detectChanges();
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 700),
-    );
+    expect(agent.start.mock.calls[1][1]).toBe(agent.start.mock.calls[0][1]);
+    expect(element.textContent).toContain('¿Cuál es el motivo de tu consulta?');
+  });
 
+  it("resumes a conversation in progress and sends the patient's answer", async () => {
+    const { fixture, element, agent } = await render(of(active));
+
+    write(fixture, element, 'Me duele la cabeza');
+
+    expect(agent.send).toHaveBeenCalledWith('c1', 'Me duele la cabeza', expect.stringMatching(/^[0-9a-f-]{36}$/));
+    const messages = Array.from(element.querySelectorAll('[data-testid="message"]')).map((m) => m.textContent);
+    expect(messages.at(-2)).toContain('Me duele la cabeza');
+    expect(messages.at(-1)).toContain('¿Desde cuándo?');
+  });
+
+  it('keeps a failed message on screen and resends it with the same key', async () => {
+    const { fixture, element, agent } = await render(of(active));
+    agent.send.mockReturnValueOnce(throwError(() => ({ status: 503, code: 'SERVICE_UNAVAILABLE' })));
+
+    write(fixture, element, 'Me duele la cabeza');
+    expect(element.textContent).toContain('Me duele la cabeza');
+    byTestId(element, 'retry')!.click();
     fixture.detectChanges();
-  };
 
-  await submitMessage(
-    'Tengo dolor de cabeza desde ayer',
-  );
+    expect(agent.send.mock.calls[1]).toEqual(agent.send.mock.calls[0]);
+    expect(element.textContent).toContain('¿Desde cuándo?');
+  });
 
-  await submitMessage(
-    'Desde ayer en la tarde',
-  );
+  it('gives the text back when the message itself was refused', async () => {
+    const { fixture, element, agent } = await render(of(active));
+    agent.send.mockReturnValueOnce(throwError(() => ({ status: 400, code: 'MESSAGE_TOO_LONG' })));
 
-  await submitMessage(
-    'También tengo un poco de mareo',
-  );
+    write(fixture, element, 'Un mensaje demasiado largo');
 
-  await submitMessage(
-    'No tengo antecedentes médicos relevantes',
-  );
+    expect(byTestId(element, 'preconsultation-error')?.textContent).toContain('1000 caracteres');
+    expect(byTestId(element, 'retry')).toBeNull();
+    expect((byTestId(element, 'message-input') as HTMLInputElement).value).toBe('Un mensaje demasiado largo');
+  });
 
-  expect(
-    element.querySelector(
-      '[data-testid="preconsultation-completed"]',
-    ),
-  ).toBeTruthy();
+  it('lets the patient finish at any moment, and never shows them the summary', async () => {
+    const { fixture, element, agent } = await render(of(active));
 
-  expect(element.textContent).toContain(
-    'Preconsulta finalizada',
-  );
+    byTestId(element, 'finish-preconsultation')!.click();
+    fixture.detectChanges();
 
-  expect(element.textContent).toContain(
-    'Hemos recopilado la información necesaria para tu consulta.',
-  );
+    expect(agent.finish).toHaveBeenCalledWith('c1');
+    expect(byTestId(element, 'preconsultation-completed')?.textContent).toContain('profesional de salud');
+    expect(byTestId(element, 'message-input')).toBeNull();
+  });
 
-  expect(element.textContent).toContain(
-    'Esta información estará disponible para el profesional de salud el día de tu cita.',
-  );
+  it('explains why it cannot finish before the patient said anything', async () => {
+    const { fixture, element, agent } = await render(of(active));
+    agent.finish.mockReturnValueOnce(throwError(() => ({ status: 409, code: 'NOTHING_TO_SUMMARIZE' })));
 
-  expect(element.textContent).not.toContain(
-    'Resumen de preconsulta',
-  );
+    byTestId(element, 'finish-preconsultation')!.click();
+    fixture.detectChanges();
 
-  expect(
-    element.querySelector(
-      '[data-testid="preconsultation-summary"]',
-    ),
-  ).toBeFalsy();
+    expect(byTestId(element, 'preconsultation-error')?.textContent).toContain('motivo de tu consulta');
+    expect(byTestId(element, 'message-input')).not.toBeNull();
+  });
 
-  const status = element.querySelector<HTMLElement>(
-    '[data-testid="preconsultation-status"]',
-  );
+  it('closes when the agent has what the professional needs', async () => {
+    const { fixture, element, agent } = await render(of(active));
+    agent.send.mockReturnValueOnce(of(reply('Gracias, ya tengo la información.', 'FINISHED')));
 
-  expect(status?.textContent).toContain(
-    'Completada',
-  );
+    write(fixture, element, 'Eso es todo');
 
-  expect(
-    element.querySelector(
-      '[data-testid="consultation-composer"]',
-    ),
-  ).toBeFalsy();
-});
+    expect(byTestId(element, 'preconsultation-completed')).not.toBeNull();
+    expect(byTestId(element, 'finish-preconsultation')).toBeNull();
+  });
 
-it('returns focus to the message input after the agent responds', async () => {
-  const element: HTMLElement = fixture.nativeElement;
+  it('shows a finished pre-consultation as sent, with a way back to the appointments', async () => {
+    const { element } = await render(of({ ...active, status: 'FINISHED' }));
 
-  const input = element.querySelector<HTMLInputElement>(
-    '[data-testid="consultation-reason-input"]',
-  );
-
-  const sendButton = element.querySelector<HTMLButtonElement>(
-    '[data-testid="send-consultation-reason"]',
-  );
-
-  input!.value = 'Tengo dolor de cabeza desde ayer';
-  input!.dispatchEvent(new Event('input'));
-
-  fixture.detectChanges();
-
-  sendButton!.click();
-  fixture.detectChanges();
-
-  await new Promise((resolve) =>
-    setTimeout(resolve, 700),
-  );
-
-  fixture.detectChanges();
-
-  const currentInput =
-    element.querySelector<HTMLInputElement>(
-      '[data-testid="consultation-reason-input"]',
-    );
-
-  expect(currentInput).toBeTruthy();
-  expect(document.activeElement).toBe(currentInput);
-});
-it('removes the typing indicator after the agent responds', async () => {
-  const element: HTMLElement = fixture.nativeElement;
-
-  const input = element.querySelector<HTMLInputElement>(
-    '[data-testid="consultation-reason-input"]',
-  );
-
-  const sendButton = element.querySelector<HTMLButtonElement>(
-    '[data-testid="send-consultation-reason"]',
-  );
-
-  input!.value = 'Tengo dolor de cabeza desde ayer';
-  input!.dispatchEvent(new Event('input'));
-
-  fixture.detectChanges();
-
-  sendButton!.click();
-  fixture.detectChanges();
-
-  expect(
-    element.querySelector(
-      '[data-testid="agent-typing"]',
-    ),
-  ).toBeTruthy();
-
-  await new Promise((resolve) =>
-    setTimeout(resolve, 700),
-  );
-
-  fixture.detectChanges();
-
-  expect(
-    element.querySelector(
-      '[data-testid="agent-typing"]',
-    ),
-  ).toBeFalsy();
-
-  expect(element.textContent).toContain(
-    '¿Desde hace cuánto tiempo presentas esta molestia?',
-  );
-});
+    expect(byTestId(element, 'preconsultation-completed')).not.toBeNull();
+    expect(byTestId(element, 'back-to-appointments')?.getAttribute('href')).toBe('/');
+    expect(byTestId(element, 'clinical-safety-notice')?.textContent).toContain('no diagnostica');
+  });
 });
