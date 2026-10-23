@@ -1,0 +1,73 @@
+<section class="appointments">
+  <h1 class="page-title">Preconsulta</h1>
+  <p class="lede">
+    Antes de tu cita, cuéntale al asistente qué sientes. Tu médico recibirá un resumen para llegar preparado.
+  </p>
+
+  @switch (state().kind) {
+    @case ('loading') {
+      <p class="notice" role="status" data-testid="appointments-loading">Buscando tus próximas citas…</p>
+    }
+
+    @case ('error') {
+      @if (state(); as error) {
+        @if (error.kind === 'error') {
+          <div class="notice notice--error" role="alert" data-testid="appointments-error">
+            <p>{{ error.message.text }}</p>
+            @if (error.message.supportCode) {
+              <p class="support">Código de soporte: {{ error.message.supportCode }}</p>
+            }
+            @if (error.message.retryable) {
+              <button type="button" class="button button--secondary" (click)="load()">Reintentar</button>
+            }
+          </div>
+        }
+      }
+    }
+
+    @case ('ready') {
+      @if (state(); as ready) {
+        @if (ready.kind === 'ready') {
+          @if (ready.rows.length === 0) {
+            <p class="notice" data-testid="appointments-empty">
+              No tienes citas próximas. Cuando agendes una, aquí podrás hacer su preconsulta.
+            </p>
+          } @else {
+            <ul class="appointment-list" aria-label="Tus próximas citas">
+              @for (row of ready.rows; track row.appointment.id) {
+                <li class="appointment" data-testid="appointment">
+                  <div class="appointment__date" aria-hidden="true">
+                    <span class="appointment__day">{{ row.day }}</span>
+                    <span class="appointment__month">{{ row.month }}</span>
+                  </div>
+
+                  <div class="appointment__details">
+                    <time class="appointment__when" [attr.datetime]="row.appointment.start">{{ row.when }}</time>
+                    <span class="appointment__status">
+                      {{ row.appointment.status === 'RESCHEDULED' ? 'Cita reprogramada' : 'Cita confirmada' }}
+                    </span>
+                  </div>
+
+                  @switch (row.preconsultation) {
+                    @case ('NONE') {
+                      <a class="button" [routerLink]="[row.appointment.id]">Hacer preconsulta</a>
+                    }
+                    @case ('ACTIVE') {
+                      <a class="button button--secondary" [routerLink]="[row.appointment.id]">Continuar preconsulta</a>
+                    }
+                    @case ('FINISHED') {
+                      <span class="sent">
+                        <span class="sent__icon" aria-hidden="true">✓</span>
+                        Preconsulta enviada a tu médico
+                      </span>
+                    }
+                  }
+                </li>
+              }
+            </ul>
+          }
+        }
+      }
+    }
+  }
+</section>
