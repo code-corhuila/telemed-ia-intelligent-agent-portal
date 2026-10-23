@@ -246,6 +246,9 @@
 .messages {
   display: flex;
   min-height: 0;
+  // Inside the shell the page has no fixed height: bounding the messages keeps the header,
+  // with "Terminar preconsulta", and the composer in view however long the conversation gets.
+  max-height: max(220px, calc(100dvh - 460px));
   flex: 1 1 auto;
   flex-direction: column;
   gap: 0.9rem;
