@@ -1,0 +1,192 @@
+// Same tokens as the conversation page, so both screens read as one portal.
+:host {
+  --telemed-blue: #173b78;
+  --telemed-primary: #2c6bed;
+  --telemed-primary-dark: #2159c7;
+  --telemed-primary-soft: #edf4ff;
+  --telemed-text: #172b4d;
+  --telemed-muted: #5f6b7d;
+  --telemed-border: #dfe5ed;
+  --telemed-surface: #ffffff;
+  --telemed-success: #238636;
+  --telemed-success-soft: #eaf7ef;
+  --telemed-danger: #b42318;
+  --telemed-danger-soft: #fef3f2;
+
+  display: block;
+  width: 100%;
+  color: var(--telemed-text);
+}
+
+.page-title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  max-width: 60ch;
+  margin: 0 0 1.5rem;
+  color: var(--telemed-muted);
+  line-height: 1.55;
+}
+
+/* STATES */
+
+.notice {
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--telemed-border);
+  border-radius: 18px;
+  background: var(--telemed-surface);
+  color: var(--telemed-muted);
+}
+
+.notice--error {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  border-color: #f4c7c3;
+  background: var(--telemed-danger-soft);
+  color: var(--telemed-danger);
+
+  p {
+    margin: 0;
+  }
+}
+
+.support {
+  font-size: 0.85rem;
+  color: var(--telemed-muted);
+}
+
+/* LIST */
+
+.appointment-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.appointment {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--telemed-border);
+  border-radius: 18px;
+  background: var(--telemed-surface);
+  box-shadow: 0 2px 8px rgb(28 49 87 / 4%);
+}
+
+/* A small calendar leaf: the day is what the patient scans for. */
+.appointment__date {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  padding: 0.45rem 0;
+  border-radius: 14px;
+  background: var(--telemed-primary-soft);
+  color: var(--telemed-blue);
+  line-height: 1.1;
+}
+
+.appointment__day {
+  font-size: 1.45rem;
+  font-weight: 750;
+}
+
+.appointment__month {
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.appointment__details {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.appointment__when {
+  font-weight: 650;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.appointment__status {
+  font-size: 0.9rem;
+  color: var(--telemed-muted);
+}
+
+/* ACTIONS */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.6rem;
+  padding: 0 1.1rem;
+  border: 1px solid var(--telemed-primary);
+  border-radius: 999px;
+  background: var(--telemed-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--telemed-primary-dark);
+    border-color: var(--telemed-primary-dark);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgb(44 107 237 / 35%);
+    outline-offset: 2px;
+  }
+}
+
+.button--secondary {
+  background: var(--telemed-surface);
+  color: var(--telemed-primary);
+
+  &:hover {
+    background: var(--telemed-primary-soft);
+    color: var(--telemed-primary-dark);
+  }
+}
+
+.sent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: var(--telemed-success-soft);
+  color: var(--telemed-success);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.sent__icon {
+  font-weight: 750;
+}
+
+@media (max-width: 560px) {
+  .appointment {
+    grid-template-columns: auto 1fr;
+  }
+
+  .appointment > .button,
+  .appointment > .sent {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+}
