@@ -672,3 +672,112 @@
     scroll-behavior: auto;
   }
 }
+
+/* NAVIGATION AND ACTIONS (real agent API) */
+
+.back-link {
+  align-self: flex-start;
+  margin: 0 0 0.5rem;
+  color: var(--telemed-primary);
+  font-weight: 650;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--telemed-primary-dark);
+    text-decoration: underline;
+  }
+}
+
+.preconsultation__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Always within reach: the patient decides when the pre-consultation ends. */
+.finish-button,
+.retry-button {
+  min-height: 2.4rem;
+  padding: 0 1rem;
+  border: 1px solid var(--telemed-primary);
+  border-radius: 999px;
+  background: var(--telemed-surface);
+  color: var(--telemed-primary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:not(:disabled):hover {
+    background: var(--telemed-primary-soft);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.start-button {
+  margin-top: 0.5rem;
+  min-height: 2.8rem;
+  padding: 0 1.4rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--telemed-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgb(44 107 237 / 18%);
+
+  &:not(:disabled):hover {
+    background: var(--telemed-primary-dark);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+}
+
+.back-link,
+.finish-button,
+.retry-button,
+.start-button {
+  &:focus-visible {
+    outline: 3px solid rgb(44 107 237 / 35%);
+    outline-offset: 2px;
+  }
+}
+
+.page-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 1.5rem 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #f4c7c3;
+  border-radius: 14px;
+  background: #fef3f2;
+  color: #b42318;
+
+  p {
+    margin: 0;
+  }
+}
+
+.page-error__support {
+  width: 100%;
+  color: var(--telemed-muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 560px) {
+  .preconsultation__header {
+    flex-wrap: wrap;
+  }
+}

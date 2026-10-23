@@ -1,4 +1,6 @@
 <section class="preconsultation">
+  <a class="back-link" routerLink=".." data-testid="back-to-appointments">← Mis citas</a>
+
   <h1 class="page-title">Asistente IA</h1>
 
   <section
@@ -7,65 +9,120 @@
   >
     <header class="preconsultation__header">
       <div>
-        <h2>Nueva preconsulta</h2>
+        <h2>Preconsulta</h2>
 
         <p>
-          Describe tus síntomas o el motivo de tu consulta para que la IA
-          organice tu información.
+          Cuéntale al asistente qué sientes para que tu médico llegue preparado a la cita.
         </p>
       </div>
 
-      <span
-        class="status"
-        data-testid="preconsultation-status"
-      >
-        @if (viewState() === 'completed') {
-          Completada
-        } @else {
-          En curso
+      <div class="preconsultation__actions">
+        @if (phase() === 'chat') {
+          <button
+            type="button"
+            class="finish-button"
+            data-testid="finish-preconsultation"
+            [disabled]="isResponding()"
+            (click)="finish()"
+          >
+            Terminar preconsulta
+          </button>
         }
-      </span>
+
+        <span
+          class="status"
+          data-testid="preconsultation-status"
+        >
+          @if (phase() === 'completed') {
+            Completada
+          } @else if (phase() === 'chat') {
+            En curso
+          } @else {
+            Sin iniciar
+          }
+        </span>
+      </div>
     </header>
 
     <div class="preconsultation-card__body">
-      @if (viewState() === 'completed') {
-        <section
-          class="conversation-state completed-state"
-          data-testid="preconsultation-completed"
-        >
-          <div
-            class="agent-icon agent-icon--large"
-            aria-hidden="true"
-          >
-            ✓
-          </div>
-
-          <h2>Preconsulta finalizada</h2>
-
-          <p>
-            Hemos recopilado la información necesaria para tu consulta.
+      @switch (phase()) {
+        @case ('loading') {
+          <p class="conversation-state" role="status" data-testid="preconsultation-loading">
+            Cargando tu preconsulta…
           </p>
+        }
 
-          <p>
-            Esta información estará disponible para el profesional de salud
-            el día de tu cita.
-          </p>
-        </section>
-      } @else if (viewState() === 'chat') {
-        <section
-          class="conversation"
-          data-testid="preconsultation-chat"
-        >
-          <div
-            #messagesContainer
-            class="messages"
+        @case ('completed') {
+          <section
+            class="conversation-state completed-state"
+            data-testid="preconsultation-completed"
           >
-            @for (message of messages(); track message.id) {
-              <article
-                class="message"
-                [class.message--patient]="message.sender === 'PATIENT'"
-              >
-                @if (message.sender === 'AGENT') {
+            <div
+              class="agent-icon agent-icon--large"
+              aria-hidden="true"
+            >
+              ✓
+            </div>
+
+            <h2>Preconsulta finalizada</h2>
+
+            <p>
+              Hemos recopilado la información necesaria para tu consulta.
+            </p>
+
+            <p>
+              Esta información estará disponible para el profesional de salud
+              el día de tu cita.
+            </p>
+          </section>
+        }
+
+        @case ('chat') {
+          <section
+            class="conversation"
+            data-testid="preconsultation-chat"
+          >
+            <div
+              #messagesContainer
+              class="messages"
+              aria-live="polite"
+            >
+              @for (message of messages(); track message.id) {
+                <article
+                  class="message"
+                  data-testid="message"
+                  [class.message--patient]="message.sender === 'PATIENT'"
+                >
+                  @if (message.sender === 'AGENT') {
+                    <div class="message__agent">
+                      <div
+                        class="agent-icon"
+                        aria-hidden="true"
+                      >
+                        ✦
+                      </div>
+
+                      <span class="message__sender">
+                        TeleMed IA
+                      </span>
+                    </div>
+                  } @else {
+                    <span class="message__sender">
+                      Tú
+                    </span>
+                  }
+
+                  <p>
+                    {{ message.content }}
+                  </p>
+                </article>
+              }
+
+              @if (isResponding()) {
+                <article
+                  class="message message--typing"
+                  data-testid="agent-typing"
+                >
                   <div class="message__agent">
                     <div
                       class="agent-icon"
@@ -78,99 +135,103 @@
                       TeleMed IA
                     </span>
                   </div>
-                } @else {
-                  <span class="message__sender">
-                    Tú
-                  </span>
-                }
 
-                <p>
-                  {{ message.content }}
-                </p>
-              </article>
-            }
-
-            @if (isResponding()) {
-              <article
-                class="message message--typing"
-                data-testid="agent-typing"
-              >
-                <div class="message__agent">
                   <div
-                    class="agent-icon"
-                    aria-hidden="true"
+                    class="typing-indicator"
+                    aria-label="TeleMed IA está escribiendo"
                   >
-                    ✦
+                    <span></span>
+                    <span></span>
+                    <span></span>
                   </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
 
-                  <span class="message__sender">
-                    TeleMed IA
-                  </span>
-                </div>
-
-                <div
-                  class="typing-indicator"
-                  aria-label="TeleMed IA está escribiendo"
-                >
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </article>
-            }
-          </div>
-        </section>
-      } @else {
-        <section
-          class="conversation-state empty-state"
-          data-testid="preconsultation-empty"
-        >
-          <div
-            class="agent-icon agent-icon--large"
-            aria-hidden="true"
+        @case ('empty') {
+          <section
+            class="conversation-state empty-state"
+            data-testid="preconsultation-empty"
           >
-            ✦
-          </div>
+            <div
+              class="agent-icon agent-icon--large"
+              aria-hidden="true"
+            >
+              ✦
+            </div>
 
-          <h2>Inicia tu conversación con la IA</h2>
+            <h2>Prepara tu cita con el asistente</h2>
 
-          <p>
-            Escribe tu mensaje en la parte inferior para comenzar tu
-            preconsulta.
-          </p>
-        </section>
+            <p>
+              Te hará unas preguntas cortas sobre lo que sientes. No diagnostica ni receta:
+              organiza tu información para tu médico.
+            </p>
+
+            <button
+              type="button"
+              class="start-button"
+              data-testid="start-preconsultation"
+              [disabled]="isResponding()"
+              (click)="start()"
+            >
+              Comenzar preconsulta
+            </button>
+          </section>
+        }
+      }
+
+      @if (error(); as failure) {
+        <div class="page-error" role="alert" data-testid="preconsultation-error">
+          <p>{{ failure.message.text }}</p>
+
+          @if (failure.message.supportCode) {
+            <p class="page-error__support">Código de soporte: {{ failure.message.supportCode }}</p>
+          }
+
+          @if (failure.retry) {
+            <button
+              type="button"
+              class="retry-button"
+              data-testid="retry"
+              [disabled]="isResponding()"
+              (click)="failure.retry()"
+            >
+              Reintentar
+            </button>
+          }
+        </div>
       }
     </div>
 
-    @if (viewState() !== 'completed') {
+    @if (phase() === 'chat') {
       <form
         class="consultation-composer"
         data-testid="consultation-composer"
-        (submit)="$event.preventDefault(); submitConsultationReason()"
+        (submit)="$event.preventDefault(); send()"
       >
         <div class="consultation-composer__field">
           <input
             #messageInput
             type="text"
-            data-testid="consultation-reason-input"
-            placeholder="Escribe aquí tu consulta..."
-            aria-label="Motivo de consulta"
+            data-testid="message-input"
+            placeholder="Escribe tu respuesta..."
+            aria-label="Tu respuesta al asistente"
             autocomplete="off"
-            [value]="consultationReason()"
+            maxlength="1000"
+            [value]="draft()"
             [disabled]="isResponding()"
-            (input)="updateConsultationReason($event)"
+            (input)="updateDraft($event)"
           />
         </div>
 
         <button
           class="send-button"
           type="submit"
-          data-testid="send-consultation-reason"
+          data-testid="send-message"
           aria-label="Enviar mensaje"
-          [disabled]="
-            consultationReason().trim().length === 0 ||
-            isResponding()
-          "
+          [disabled]="draft().trim().length === 0 || isResponding()"
         >
           <span aria-hidden="true">➤</span>
         </button>
