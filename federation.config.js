@@ -18,6 +18,13 @@ module.exports = withNativeFederation({
     }),
   },
 
+  // NORMA 5.4.1: HTTP client, session and error type come from the shell.
+  externals: [
+    'shell/apiClient',
+    'shell/session',
+    'shell/apiError',
+  ],
+
   // Entry points the application never loads: sharing them would bundle their
   // dependencies (@angular/animations is not installed).
   skip: [
