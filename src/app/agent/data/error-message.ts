@@ -27,6 +27,10 @@ const MESSAGES: Readonly<Record<string, Omit<UserMessage, 'supportCode'>>> = {
   },
   MESSAGE_TOO_LONG: { text: 'Tu mensaje es muy largo. Escribe máximo 1000 caracteres.', retryable: false },
   INVALID_MESSAGE: { text: 'Escribe lo que quieres contarle al asistente.', retryable: false },
+  PRECONSULTATION_PAUSED: {
+    text: 'Las preconsultas están en pausa en este momento. Tu cita sigue en pie sin la preconsulta.',
+    retryable: false,
+  },
   SERVICE_UNAVAILABLE: {
     text: 'El asistente no está disponible en este momento. Inténtalo de nuevo en unos segundos.',
     retryable: true,
