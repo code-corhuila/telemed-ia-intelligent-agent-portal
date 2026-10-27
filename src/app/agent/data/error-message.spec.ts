@@ -15,6 +15,14 @@ describe('errorMessage', () => {
     expect(errorMessage({ status: 409, code: 'CONVERSATION_FINISHED' }).retryable).toBe(false);
   });
 
+  it('tells the patient the appointment goes on while pre-consultations are paused', () => {
+    const paused = errorMessage({ status: 503, code: 'PRECONSULTATION_PAUSED' });
+
+    expect(paused.text).toContain('Tu cita sigue en pie');
+    expect(paused.retryable).toBe(false);
+    expect(paused.supportCode).toBeUndefined();
+  });
+
   it('gives a support code only for unexpected failures', () => {
     expect(errorMessage({ status: 500, code: 'INTERNAL_ERROR', traceId: 'trace-1' })).toEqual({
       text: 'No pudimos completar la solicitud. Inténtalo de nuevo en unos minutos.',
